@@ -1,0 +1,79 @@
+*
+{
+    font-family: "Open Sans", sans-serif;
+}
+#cabezera
+{
+    background-image: url(https://fundacionloyola.com/vguadalupe/wp-content/uploads/2019/12/slide00.jpg);
+    background-size: cover;
+    background-position: center center;
+    height: 416px;
+    transform: translate(0px, -19.6125px);
+    width: 100%;
+}
+
+.cabezera-titulo
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: "Roboto", sans-serif;
+    font-size: 75px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.rayas
+{
+    width: 16%;
+    margin: 14px auto 14px auto;
+    color: #006293;
+    height: 4px!important;
+    font-family: "Roboto", sans-serif;
+}
+
+.cancelarpaddingtop
+{
+    padding-top: 0!important;
+}
+
+footer
+{
+    background-color: #025179;
+    margin-bottom: 0px!important;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+ /*Quitar la decoracion y ponerlo blanco */
+footer a
+{
+    color: white;
+    text-decoration: none;
+}
+
+
+/*Cancela el margon bottom, que le da el footer, el boostrap*/
+.cancelarmarginbottom
+{
+    margin-bottom: 0!important;
+
+}
+.redessociales a
+{
+    font-size: 19px;
+    display: inline;
+    margin-right: 20px;
+}
+
+.redessociales
+{
+    padding-right: 1px;
+}
+
+
