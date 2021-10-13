@@ -45,7 +45,7 @@
                         // Comprobar que existe en la BD ese correo.
                         $consulta = "SELECT * FROM usuarios WHERE Correo='$UserEmail'";
                         //echo '<br>La consulta '.$consulta.'<br>';
-                        //print_r($consulta);
+                        
                         $objeto->realizarConsultas($consulta);
 
 
@@ -53,7 +53,7 @@
                         if ($objeto->comprobarFila()>0)
                         {
                             // Mensaje que indica que esa cuenta esta creada en la BD.
-                            //echo '<br>> El Alumno no esta guardado.<br>';
+                            //echo '<br>> El Alumno esta guardado.<br>';
 
                             // Extraigo los datos sacado de la consulta (linea 40) y lo guardo en una variable.
                             $fila = $objeto->extraerFilas();
@@ -69,7 +69,7 @@
                         else
                         {
                             // Mensaje que el Alumno, no esta registrado.
-                            //echo '<br>> El Alumno <b>NO</b> esta guardado.';
+                            echo '<br>> El Alumno <b>NO</b> esta guardado.';
                             $consulta = "INSERT INTO usuarios (UserName, UserLastName, Correo, Tipo) VALUES ('$UserName', '$UserLastName', '$UserEmail', 'a')";
                             //echo $consulta;
                             $objeto->realizarConsultas($consulta);
@@ -194,7 +194,7 @@
                     // El dominio no es valido.
                     default:
                         //echo '> Este dominio no tiene acceso.';
-                        $respuesta["logged"] = false;
+                        $respuesta["logged"] = 0;
                         print_r($respuesta);
                         break;
                 }

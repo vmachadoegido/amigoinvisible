@@ -34,7 +34,7 @@ function auth(action, profile = null)
 {
     let data = { UserAction : action };
     
-    console.log(action);
+    //console.log(action);
 
     if(profile)
     {
@@ -59,7 +59,7 @@ function auth(action, profile = null)
             success: function(data)
             {
                 // Muestra por consola los datos recividos
-                //console.log(data);
+                console.log(data);
                 
                 // Convierte el objeto data en JSON
                 let user = JSON.stringify(data);
@@ -67,10 +67,10 @@ function auth(action, profile = null)
                 // Muestro por consola la conversion.
                 //console.log(user);
                 // Muestro donde esta el valor de logged.
-                //console.log(user[136]);
+                //console.log(user[126]);
                 
                 // Si user[27] | logged es 1, significa que esta logeado la cuanta, e caso que no cierra la cuanta.
-                if(user[136] == 1)
+                if(user[126] == 1)
                 {
                     // Esa cuanta esta logeada y es del dominio.
                     //alert("hola");
@@ -88,7 +88,7 @@ function auth(action, profile = null)
                     alert("Ese dominio no es valido.");
                     
                     // Cerrar Sesion
-                    //singOut();
+                    singOut();
                 }
                 
             }
