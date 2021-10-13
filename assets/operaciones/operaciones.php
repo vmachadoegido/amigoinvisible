@@ -2,6 +2,10 @@
     // Traer los valores de la conexion.
     require("../assets/conexion/connection.php");
 
+/**
+    Clase de operaciones.
+    Recoge la librería de funciones reutilizadas en otros ficheros.
+*/
     class operaciones
     {
         public $mysqli;
@@ -19,13 +23,20 @@
 
         }
 
-        // Devuelve la conexion
+        /**
+            Devuelve la conexion
+            @return MySQLi El objeto de conexión a la BBDD.
+         */
         function conexion()
         {
             return $this->mysqli = new mysqli(servidor, usuario, password, basedatos);
         }
 
-        // Funcion para realizar la consulta.
+        /**
+            Funcion para realizar la consulta.
+            Guarda el ResultSet en $this->resultado
+            @param sql {String} Sentencia SQL para la consulta.
+        */
         function realizarConsultas($sql)
         {
             $this->resultado = $this->mysqli->query($sql);
