@@ -11,12 +11,12 @@ function onSignIn(googleUser)
 // Funcion para desconectar
 function signOut() 
 {
-  var auth2 = gapi.auth2.getAuthInstance();
-  auth2.signOut().then(function () {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
         // Mensaje de consolta para decir que se desconecto
         console.log('El usuario se desconecto');
         // Lo redirige a la pagina principal.
-        window.location.href = "http://amigoinvisible.com";
+//        window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/";
   });
 }
 // Funcion de carga
@@ -28,8 +28,7 @@ function onLoad()
 }
     
 
-
-
+//Funcion para logearse
 function auth(action, profile = null)
 {
     let data = { UserAction : action };
@@ -47,48 +46,71 @@ function auth(action, profile = null)
                 UserEmail : profile.getEmail(),
                 UserAction : action,
             };
-		// Sitio donde explica las variables. https://developers.google.com/identity/sign-in/web/sign-in	
+		// Sitio donde explica las variables. https://developers.google.com/identity/sign-in/web/sign-in
     }
     
     // Busca los datos que se imprime en la web user.php
     $.ajax(
         {
             type: "POST",
-            url: "../users/user.php",
+            url: "https://22.2daw.esvirgua.com/amigoinvisible/users/user.php",
             data: data,
             success: function(data)
             {
                 // Muestra por consola los datos recividos
                 console.log(data);
                 
+                // Crear la cookie del usuario.
+//                document.cookie = "nombre=oeschger";
+                
+                
                 // Convierte el objeto data en JSON
                 let user = JSON.stringify(data);
-                
+            
                 // Muestro por consola la conversion.
-                //console.log(user);
+                 console.log(user);
                 // Muestro donde esta el valor de logged.
-                //console.log(user[126]);
+                console.log(user[27]);
                 
                 // Si user[27] | logged es 1, significa que esta logeado la cuanta, e caso que no cierra la cuanta.
-                if(user[126] == 1)
+                if(user[27] == 1)
                 {
                     // Esa cuanta esta logeada y es del dominio.
                     //alert("hola");
-                    
-                    //Si esta logeado, y esta en la pagina principal le lleva a la sesscion registrado.
-                    if(document.URL === "http://amigoinvisible.com/")
-                    {
-                        window.location.href = "http://amigoinvisible.com/registrado/";
-                    }
-                    
+                
+                    // Alerta Personalizada - La cual aparece cuando es correcta la sesion
+                    let timerInterval
+                    Swal.fire({
+                      icon: 'success',
+                      title: 'Correcto',
+                      text: 'Bienvenido :D',
+                      showConfirmButton: false,  
+                      timer: 2000
+                    }).then((result) => {
+                      if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.href = "https://22.2daw.esvirgua.com/amigoinvisible/registrado/";
+                      }
+                    })
+
                 }
                 else
                 {
                     // Esta cuanta NO es del dominio.
-                    alert("Ese dominio no es valido.");
+
+                    // Alerta Personalizada - La cual aparece cuando el correo no es del dominio.
+                    let timerInterval
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Oops..',
+                      text: 'Parece que ese correo no pertenece a este dominio',
+                      showConfirmButton: false,
+                      timer: 2000
+                    })
                     
                     // Cerrar Sesion
-                    singOut();
+                    //singOut();
+                    
+
                 }
                 
             }

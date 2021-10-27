@@ -15,10 +15,11 @@
         function __construct()
         {
             $this->mysqli = new mysqli(servidor, usuario, password, basedatos);
-
+            
             if(!$this->mysqli)
             {
                 echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
+                echo "<script>console.log('Error: No se pudo conectar a la BD.');</script>";
             }
 
         }
@@ -71,6 +72,5 @@
         {
             return $this->mysqli->errno;
         }
-
     }
 ?>

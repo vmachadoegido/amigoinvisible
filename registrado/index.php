@@ -23,9 +23,69 @@
 
         <!-- Estilos Generales -->
         <link href="../assets/css/estilo.css" rel="stylesheet">
+        
+        <!-- Libreria de Alertas -->
+        <!-- Pagina https://sweetalert2.github.io -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <script src="../assets/js/funciones.js"></script>
 
     </head>
     <body>
+        
+        <!-- Recoger el correo de la cookie -->
+        <script> 
+            
+            // Creo la cookie correo ( No tendria que estar aqui, es de pruebas) 
+            document.cookie = "correo=vmachadoegido.guadalupe@alumnado.fundacionloyola.net";
+
+        </script>
+        
+        <!-- Comprobar que exite la cookie correo -->
+        <?php 
+            // Iniciar Sesion
+            session_start();
+
+            if(isset($_COOKIE["correo"]))
+            {
+                // Importo las operaciones
+                require("../assets/operaciones/operaciones.php");
+
+                // Crear el objeto de operaciones.
+                $objeto=new operaciones();
+
+                // Guardo el 
+                $correo = $_COOKIE["correo"];
+                
+                // Consulta para traer los datos del correo.
+                $consulta = "SELECT * FROM usuarios WHERE correo='$correo';";
+                //echo '<br>'.$consulta.'<br>';
+
+                $objeto->realizarConsultas($consulta);
+
+                // Comprueba que devolvio filas.
+                if($objeto->comprobarFila()>0)
+                {
+                    // Extrar las filas de la consulta.
+                    $fila = $objeto->extraerFilas();
+
+                    // Guardo las variables en la sesion
+                    $_SESSION["correo"] = $fila["Correo"];
+                    $_SESSION["tipo"] = $fila["Tipo"];
+                    
+                    //echo $_SESSION["correo"].'---'.$_SESSION["tipo"].'';
+
+                }
+                else // No exite ese correo por lo tanto le regresa a la pagina principal.
+                {
+                    echo '<script> nologeado(); </script>';
+                }
+        
+            }
+        ?>
+        
+
+        
         <!-- Cabezera - Navegador -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
             <!-- Imagen de la corpoativa -->
@@ -34,8 +94,8 @@
             </a>
             <!-- Opciones del navegador -->
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="http://amigoinvisible.com/registrado/" class="nav-link px-2 link-secondary">Inicio</a></li>
-                <li><a href="http://amigoinvisible.com/registrado/grupos.php" class="nav-link px-2 link-dark">Mis grupos</a></li>
+                <li><a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/" class="nav-link px-2 link-secondary">Inicio</a></li>
+                <li><a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="nav-link px-2 link-dark">Mis grupos</a></li>
             </ul>
         </header>
 
@@ -61,20 +121,11 @@
                         Para acceder a nuestro amigo invisible,<br> tienes que iniciar sersion con tu cuenta de google del colegio.
                     </p>
                     
-                    <!-- Texto indicando el usuario que has iniciado sesion --
+                    <!-- Texto indicando el usuario que has iniciado sesion -->
                     <?php
-                        // Iniciar Sesion
-                        session_start();
                         // Muestre el correo guardado de la sesion.
-                        echo '<br>Iniciado Sesion con <br><span style="font-size: 12px;">'.$_COOKIE["correo"].'</span><br>';
+                        echo '<br>Iniciado Sesion con <br><span style="font-size: 12px;">'.$_SESSION["correo"].'</span><br>';
                     ?>
-                    
-                    <!-- Boton de Cerrar sesion -->
-                    <a href="" class="btn btn-outline-secondary google-btn float-left" onclick="signOut();">
-                        <i class="fa fa-power-off" aria-hidden="true"></i>
-                        Cerrar Sesión
-                    </a>
-                
                 </div>
             </div>
         </div>
@@ -115,7 +166,7 @@
         </footer>
     </body>
 </html>
-
-<!--Apis de google-->
-<script src="../assets/js/signin.js"></script>
-<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<!-- Librerias necesarias. JQuery, Popper y Boostrap-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
