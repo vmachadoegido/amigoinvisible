@@ -4,7 +4,6 @@
 
     // Traerme los datos de conexion.
     require("../assets/operaciones/operaciones.php");
-    require("../assets/operaciones/crearsesion.php");
 
     // Crear el objeto de operaciones.
     $objeto=new operaciones();

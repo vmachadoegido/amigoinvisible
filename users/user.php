@@ -4,7 +4,6 @@
 
     // Traerme los datos de conexion.
     require("../assets/operaciones/operaciones.php");
-    require("../assets/operaciones/crearsesion.php");
 
     // Crear el objeto de operaciones.
     $objeto=new operaciones();
@@ -186,7 +185,6 @@
                             print_r($respuesta);
                             
                             // Se guarda el correo y el rol del usuario.
-                            $_SESSION["usuario"] = $fila["IDUsuario"];
                             $_SESSION["correo"] = $fila["Correo"];
                             $_SESSION["rol"] = $fila["Tipo"];
                         
