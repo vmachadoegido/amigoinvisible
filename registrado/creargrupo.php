@@ -1,7 +1,10 @@
 <?php
 
+    // Iniciar sesion
+    session_start();
 
-    if(isset($_POST["nombregrupo"]) && isset($_POST["fechareparto"]) && isset($_POST["correo"]))
+    // COmprobar que recibe los datos.
+    if(isset($_POST["nombregrupo"]) && isset($_POST["fechareparto"]))
     {
         
         // En caso que venga vacio el nombre del grupo.
@@ -16,12 +19,10 @@
         
         // Guardar variables
         $fechareparto = $_POST["fechareparto"];
-        $correo = $_POST["correo"];
+        $correo = $_SESSION["usuario"];
         
         // Fecha de hoy
         $fechahoy = date('Y-m-d');
-        
-        
         
         // Importo las operaciones
         require("../assets/operaciones/operaciones.php");
@@ -30,7 +31,7 @@
         $objeto=new operaciones();
 
         // Consulta para traer los datos del correo.
-        $consulta = "SELECT * FROM usuarios WHERE correo='$correo';";
+        $consulta = "SELECT * FROM usuarios WHERE correo='".$_SESSION["correo"]."';";
         //echo '<br>'.$consulta.'<br>';
 
         $objeto->realizarConsultas($consulta);

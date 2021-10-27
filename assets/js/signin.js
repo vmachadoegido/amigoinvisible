@@ -60,10 +60,6 @@ function auth(action, profile = null)
                 // Muestra por consola los datos recividos
                 console.log(data);
                 
-                // Crear la cookie del usuario.
-//                document.cookie = "nombre=oeschger";
-                
-                
                 // Convierte el objeto data en JSON
                 let user = JSON.stringify(data);
             
@@ -75,10 +71,7 @@ function auth(action, profile = null)
                 // Si user[27] | logged es 1, significa que esta logeado la cuanta, e caso que no cierra la cuanta.
                 if(user[27] == 1)
                 {
-                    // Esa cuanta esta logeada y es del dominio.
-                    //alert("hola");
-                
-                    // Alerta Personalizada - La cual aparece cuando es correcta la sesion
+                    // Alerta Personalizada - La cual aparece cuando es correcta la sesion y le lleva a la pagina logeada.
                     let timerInterval
                     Swal.fire({
                       icon: 'success',

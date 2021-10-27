@@ -1,3 +1,15 @@
+<?php
+    // Iniciar session
+    session_start();
+
+    // Traerme los datos de conexion.
+    require("../assets/operaciones/operaciones.php");
+    require("../assets/operaciones/crearsesion.php");
+
+    // Crear el objeto de operaciones.
+    $objeto=new operaciones();
+
+?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -28,59 +40,14 @@
          
     </head>
     <body>
-        <!-- Comprobar que exite la cookie correo -->
+        <!-- Comprobar que la sesion correo existe -->
         <?php 
-            // Iniciar Sesion
-            session_start();
 
-            if(isset($_COOKIE["correo"]))
+            // Si no hay sesion correo, mensaje de alerta.
+            if(!isset($_SESSION["correo"]))
             {
-                
-                // Importo las operaciones
-                require("../assets/operaciones/operaciones.php");
-
-                // Crear el objeto de operaciones.
-                $objeto=new operaciones();
-
-                // Guardo el 
-                $correo = $_COOKIE["correo"];
-                
-                // Consulta para traer los datos del correo.
-                $consulta = "SELECT * FROM usuarios WHERE correo='$correo';";
-                //echo '<br>'.$consulta.'<br>';
-
-                $objeto->realizarConsultas($consulta);
-
-                // Comprueba que devolvio filas.
-                if($objeto->comprobarFila()>0)
-                {
-                    // Extrar las filas de la consulta.
-                    $fila = $objeto->extraerFilas();
-                    
-                    
-                    // Guardo las variables en la sesion
-                    $_SESSION["correo"] = $fila["Correo"];
-                    $_SESSION["tipo"] = $fila["Tipo"];
-                    $_SESSION["usuario"] = $fila["IDUsuario"];
-                    
-                    // Simulaciones
-                    //$_SESSION["correo"] = "";
-                    //$_SESSION["tipo"] = 'p';
-                    
-                    
-                    //echo $_SESSION["correo"].'---'.$_SESSION["tipo"].'';
-                    
-                    // Saber la fecha de hoy
-                    $fechahoy = date('Y-m-d');
-                    // Guardar la fecha en session
-                    $_SESSION["fechahoy"] = $fechahoy;
-
-                }
-                else // No exite ese correo por lo tanto le regresa a la pagina principal.
-                {
-                    echo '<script> nologeado(); </script>';
-                }
-        
+                // Mensaje de alerta que no ha iniciado sesion
+                echo '<script> nologeado(); </script>';
             }
         ?>
 
@@ -122,10 +89,19 @@
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                     <!-- Card Bucle -->
                     <?php
-                        if($_SESSION["tipo"] == "p")
-                        {
+                    
+                        //echo $_SESSION["rol"] = "a";
+                    
+                        // Si su rol es p
+                        if($_SESSION["rol"] == "p")
+                        { 
                             // Consulta 
-                            $consulta = "SELECT * FROM grupos WHERE Propietario ='".$_SESSION["usuario"]."' ORDER BY Fecha_Fin ASC";
+                            $consulta = "
+                                SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.Fecha_Fin, grupos.Propietario, usuarios.IDUsuario
+                                FROM usuarios
+                                INNER JOIN grupos ON usuarios.IDUsuario=grupos.Propietario
+                                WHERE usuarios.Correo = '".$_SESSION["correo"]."'
+                                ORDER BY grupos.Fecha_Fin ASC";
                             //print_r($consulta);
                             $objeto->realizarConsultas($consulta);
 
@@ -159,15 +135,15 @@
                         else
                         {
                             // Si es tipo a
-                            if($_SESSION["tipo"] == "a")
+                            if($_SESSION["rol"] == "a")
                             {
                                 // Consulta. Donde busca que grupo pertenece el usuario.
                                 $consulta = "
-                                    SELECT usuarios.IDUsuario, grupos.IDGrupo, grupos.Nombre, grupos.Fecha_Inicio, grupos.Fecha_Fin, grupos.Propietario
+                                    SELECT usuarios.IDUsuario, usuarios.Correo, grupos.IDGrupo, grupos.Nombre, grupos.Fecha_Inicio, grupos.Fecha_Fin, grupos.Propietario
                                     FROM usuarios
                                     INNER JOIN usuariogrupo ON usuarios.IDUsuario=usuariogrupo.IDUsuario
                                     INNER JOIN grupos ON usuariogrupo.IDGrupo=grupos.IDGrupo
-                                    WHERE usuarios.IDUsuario = '".$_SESSION["usuario"]."'
+                                    WHERE usuarios.correo = '".$_SESSION["correo"]."'
                                     ORDER BY grupos.Fecha_Fin ASC";
                                 //print_r($consulta);
                                 $objeto->realizarConsultas($consulta);
@@ -186,12 +162,9 @@
                                                         echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
                                                     echo '</p>';
                                                     echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
-                                                        echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Expulsar</button>';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Eliminar</button>';
+                                                        echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3">';
+                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</button>';
+                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</button>';
                                                         echo '</div>';
                                                     echo '</div>';
                                                 echo '</div>';
@@ -233,7 +206,7 @@
         
         <!-- Boton para agregar grupos. Solo perfil Profesor-->
         <?php
-            if($_SESSION["tipo"]=='p')
+            if($_SESSION["rol"]=="p")
             {
                 echo '<button class="botonagregar" data-toggle="modal" data-target="#ventanacreargrupo">';
                     echo '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
@@ -254,14 +227,12 @@
                     </div>
                     <div class="modal-body">
                         <form method="POST">
-                            <?php echo '<input id="correo" name="correo" type="hidden" value="'.$_SESSION['correo'].'"/>'; ?>
                             <label for="nombregrupo" required>Nombre del Grupo </label>
                             <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
                             <label for="fechareparto" required>Fecha del Reparo</label>
                             <!-- <input type="date" id="fechareparto" name="trip-start" value="2018-07-22"/> -->
-                            <?php echo '<input type="date" id="fechareparto" name="trip-start" value="'.$_SESSION['fechahoy'].'" required/>'; ?>
+                            <?php $fechahoy = date('Y-m-d'); echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
                             <input type="submit" id="crear" value="Crear" name="Crear">
-<!--                           <input type="submit" value="Crear" name="Crear">                     -->
                         </form>
                     </div>
                     <div class="modal-footer">

@@ -1,4 +1,6 @@
 <?php
+    // Inicia sesion
+    session_start();
 
     // Traerme los datos de conexion.
     require("../assets/operaciones/operaciones.php");
@@ -60,7 +62,11 @@
 
                     // Imprime los datos de la BD. signin.js lo lee.
                     print_r($respuesta);
-                                      
+                    
+                    // Se guarda el correo y el rol del usuario.
+                    $_SESSION["correo"] = $fila["Correo"];
+                    $_SESSION["rol"] = $fila["Tipo"];
+
                 }
                 else
                 {
@@ -95,6 +101,10 @@
 
                             // Imprime los datos de la BD. signin.js lo lee.
                             print_r($respuesta);
+                            
+                            // Se guarda el correo y el rol del usuario.
+                            $_SESSION["correo"] = $fila["Correo"];
+                            $_SESSION["rol"] = $fila["Tipo"];
                             
                         }
                         else
@@ -136,6 +146,9 @@
                     // Imprime los datos de la BD. signin.js lo lee.
                     print_r($respuesta);
                     
+                    // Se guarda el correo y el rol del usuario.
+                    $_SESSION["correo"] = $fila["Correo"];
+                    $_SESSION["rol"] = $fila["Tipo"];
 
                 }
                 else
@@ -172,8 +185,11 @@
                             // Imprime los datos de la BD. signin.js lo lee.
                             print_r($respuesta);
                             
-                            // Crea la cookie
-                            setcookie("correo", $UserEmail, false, "/");
+                            // Se guarda el correo y el rol del usuario.
+                            $_SESSION["usuario"] = $fila["IDUsuario"];
+                            $_SESSION["correo"] = $fila["Correo"];
+                            $_SESSION["rol"] = $fila["Tipo"];
+                        
                         }
                         else
                         {

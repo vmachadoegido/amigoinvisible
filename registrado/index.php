@@ -1,3 +1,7 @@
+<?php
+    // Iniciar session
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -33,54 +37,23 @@
     </head>
     <body>
         
-        <!-- Recoger el correo de la cookie -->
+<!--
+         Recoger el correo de la cookie 
         <script> 
             
             // Creo la cookie correo ( No tendria que estar aqui, es de pruebas) 
             document.cookie = "correo=vmachadoegido.guadalupe@alumnado.fundacionloyola.net";
 
         </script>
+-->
         
-        <!-- Comprobar que exite la cookie correo -->
+        <!-- Comprobar que exite la session correo -->
         <?php 
-            // Iniciar Sesion
-            session_start();
-
-            if(isset($_COOKIE["correo"]))
+            // Si no hay sesion correo, mensaje de alerta.
+            if(!isset($_SESSION["correo"]))
             {
-                // Importo las operaciones
-                require("../assets/operaciones/operaciones.php");
-
-                // Crear el objeto de operaciones.
-                $objeto=new operaciones();
-
-                // Guardo el 
-                $correo = $_COOKIE["correo"];
-                
-                // Consulta para traer los datos del correo.
-                $consulta = "SELECT * FROM usuarios WHERE correo='$correo';";
-                //echo '<br>'.$consulta.'<br>';
-
-                $objeto->realizarConsultas($consulta);
-
-                // Comprueba que devolvio filas.
-                if($objeto->comprobarFila()>0)
-                {
-                    // Extrar las filas de la consulta.
-                    $fila = $objeto->extraerFilas();
-
-                    // Guardo las variables en la sesion
-                    $_SESSION["correo"] = $fila["Correo"];
-                    $_SESSION["tipo"] = $fila["Tipo"];
-                    
-                    //echo $_SESSION["correo"].'---'.$_SESSION["tipo"].'';
-
-                }
-                else // No exite ese correo por lo tanto le regresa a la pagina principal.
-                {
-                    echo '<script> nologeado(); </script>';
-                }
-        
+                // Mensaje de alerta que no ha iniciado sesion
+                echo '<script> nologeado(); </script>';
             }
         ?>
         
