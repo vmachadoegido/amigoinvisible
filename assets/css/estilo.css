@@ -2,6 +2,7 @@
 {
     font-family: "Open Sans", sans-serif;
 }
+
 #cabezera
 {
     background-image: url(https://fundacionloyola.com/vguadalupe/wp-content/uploads/2019/12/slide00.jpg);
@@ -98,9 +99,16 @@ footer a
     border: 0 transparent;
 }
 
+a
+{
+    text-decoration: none;
+    color: black;
+}
 
-
-
+a:hover {
+    text-decoration: none;
+    color: black;
+}
 
 
 

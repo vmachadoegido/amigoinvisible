@@ -35,6 +35,7 @@
         
         <!-- Librerias personales -->
         <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
+        <script type="text/javascript" src="../assets/js/funciones.js"></script>
 
          
     </head>
@@ -47,6 +48,26 @@
             {
                 // Mensaje de alerta que no ha iniciado sesion
                 echo '<script> nologeado(); </script>';
+            }
+        ?>
+        
+        <!-- Comprobar mensaje de error -->
+        <?php
+            
+            if(isset($_SESSION["mensaje"]))
+            {
+                // Mensaje si se elimino el grupo
+                if($_SESSION["mensaje"] == "CorrectoE")
+                {
+                    echo '<script> correctoeliminado(); </script>';
+                    unset($_SESSION["mensaje"]);
+                }
+                // Mensaje de error.
+                if($_SESSION["mensaje"] == "Error")
+                {
+                    echo '<script> error(); </script>';
+                    unset($_SESSION["mensaje"]);
+                }
             }
         ?>
 
@@ -96,7 +117,7 @@
                         { 
                             // Consulta 
                             $consulta = "
-                                SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.Fecha_Fin, grupos.Propietario, usuarios.IDUsuario
+                                SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.IDGrupo, grupos.Fecha_Fin, grupos.Propietario
                                 FROM usuarios
                                 INNER JOIN grupos ON usuarios.IDUsuario=grupos.Propietario
                                 WHERE usuarios.Correo = '".$_SESSION["correo"]."'
@@ -122,7 +143,7 @@
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Expulsar</button>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>';
-                                                        echo '<button type="button" class="btn btn-sm btn-outline-secondary">Eliminar</button>';
+                                                        echo '<a href="eliminargrupo.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Eliminar</a>';
                                                     echo '</div>';
                                                 echo '</div>';
                                             echo '</div>';
@@ -202,7 +223,7 @@
                 </div>
             </div>
         </div>
-        
+          
         <!-- Boton para agregar grupos. Solo perfil Profesor-->
         <?php
             if($_SESSION["rol"]=="p")
@@ -242,6 +263,30 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Ventana Modal - Eliminar Grupo -->
+        <div class="modal fade" id="ventanaeliminar" tabindex="-1" role="dialog" aria-labelledby="tituloeliminargrupo" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="tituloeliminargrupo">Eliminar Grupo</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <label for="nombregrupo" required>Eliminar Grupo </label>
+                            <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
+                            <input type="submit" id="crear" value="Crear" name="Crear">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        
         
         
         <!-- Pie -->

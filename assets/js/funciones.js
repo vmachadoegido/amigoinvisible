@@ -23,3 +23,36 @@ function nologeado()
     
 }
 
+// Esta funcion sirve para mostrar un mensaje de error personalizado.
+
+function error()
+{
+    let timerInterval
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops',
+      text: 'Hubo un error',
+      showConfirmButton: false,  
+      timer: 2000
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+        window.location.href = "hhttp://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php";
+      }
+    })
+}
+
+function correctoeliminado()
+{
+    let timerInterval
+    Swal.fire({
+      icon: 'success',
+      title: 'Correcto',
+      text: 'Eliminado Correctamente',
+      showConfirmButton: false,  
+      timer: 2000
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+        window.location.href = "hhttp://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php";
+      }
+    })
+}
