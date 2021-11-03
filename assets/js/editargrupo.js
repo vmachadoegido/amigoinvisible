@@ -1,0 +1,52 @@
+ $(document).ready(function () {
+
+    $("#editar").click(function(event){
+
+        event.preventDefault(); // Mostrar un mensaje del servidor.
+
+        var nombregrupo = $("#nombregrupo2").val();
+        var fechareparto = $("#fechareparto2").val();
+        var idgrupo = $("#idgrupo").val();
+
+        $.post("../registrado/editargrupo.php", {
+            nombregrupo: nombregrupo,
+            fechareparto: fechareparto,
+            idgrupo: idgrupo
+        }, function(respuesta){
+//            $("#info").text(respuesta)
+            console.log(respuesta)
+
+            if(respuesta == "Si")
+            {
+                Swal.fire({
+                  icon: 'success',
+                  text: 'Modificado correctamente',
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Actualizar'
+                }).then((result) => {
+                  if (result.isConfirmed)
+                  {
+                        window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+                  }
+                  else
+                  {
+                      window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+                  }
+                })
+            }
+            else // En caso que sea No o cualquier otro valor de error.
+            {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Ocurrio algo inesperado y no se pudo editar el grupo.',
+                  showConfirmButton: false,
+                })
+            }
+
+
+        });
+
+    });
+});

@@ -6,7 +6,7 @@
     // COmprobar que recibe los datos.
     if(isset($_POST["nombregrupo"]) && isset($_POST["fechareparto"]))
     {
-        
+
         // En caso que venga vacio el nombre del grupo.
         if(empty($_POST["nombregrupo"]))
         {
@@ -16,14 +16,14 @@
         {
             $nombregrupo = $_POST["nombregrupo"];
         }
-        
+
         // Guardar variables
         $fechareparto = $_POST["fechareparto"];
         $correo = $_SESSION["usuario"];
-        
+
         // Fecha de hoy
         $fechahoy = date('Y-m-d');
-        
+
         // Importo las operaciones
         require("../assets/operaciones/operaciones.php");
 
@@ -59,9 +59,9 @@
                 $objeto->realizarConsultas($consulta);
                 if($objeto->comprobar()>0)
                 {
-                    echo 'Si'; 
+                    echo 'Si';
                 }
-                else 
+                else
                 {
                     echo 'No';
                 }
@@ -75,7 +75,7 @@
         {
             echo 'No';
         }
-        
+
     }else
         echo 'No';
 

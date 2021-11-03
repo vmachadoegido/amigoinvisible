@@ -28,20 +28,32 @@
 
         <!-- Estilos Generales -->
         <link href="../assets/css/estilo.css" rel="stylesheet">
-        
+
         <!-- Libreria de Alertas -->
         <!-- Pagina https://sweetalert2.github.io -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
-        <!-- Librerias personales -->
-        <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
-        <script type="text/javascript" src="../assets/js/funciones.js"></script>
 
-         
+        <!-- Librerias personales -->
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script type="text/javascript" src="../assets/js/creargrupo.js"></script>
+<!--<script type="text/javascript" src="../assets/js/editargrupo.js"></script>-->
+<script type="text/javascript" src="../assets/js/funciones.js"></script>
+
+
+
+
+
     </head>
     <body>
         <!-- Comprobar que la sesion correo existe -->
-        <?php 
+        <?php
 
             // Si no hay sesion correo, mensaje de alerta.
             if(!isset($_SESSION["correo"]))
@@ -49,11 +61,14 @@
                 // Mensaje de alerta que no ha iniciado sesion
                 echo '<script> nologeado(); </script>';
             }
+
+            // Creo la variable de la fecha
+            $fechahoy = date('Y-m-d');
         ?>
-        
+
         <!-- Comprobar mensaje de error -->
         <?php
-            
+
             if(isset($_SESSION["mensaje"]))
             {
                 // Mensaje si se elimino el grupo
@@ -70,6 +85,22 @@
                 }
             }
         ?>
+
+        <!-- Se comprueba si hay una id -->
+        <?php
+
+            if(isset($_GET["id"]))
+            {
+                //echo $_GET["id"];
+                // Ejecuta la ventana modal de editar grupo. Lo hace visible.
+                echo '<script>
+                        $(document).ready(function(){
+                          $("#ventanaeditargrupo").modal();
+                        });
+                    </script>';
+            }
+        ?>
+
 
         <!-- Cabezera - Navegador -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
@@ -98,24 +129,24 @@
                     <!-- Separador -->
                     <hr class="rayas">
                     <!-- Contenido-->
-        
-                </div> 
+
+                </div>
             </div>
         </div>
-        
+
         <!-- Contenedor de grupo -->
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                     <!-- Card Bucle -->
                     <?php
-                    
+
                         //echo $_SESSION["rol"] = "a";
-                    
+
                         // Si su rol es p
                         if($_SESSION["rol"] == "p")
-                        { 
-                            // Consulta 
+                        {
+                            // Consulta
                             $consulta = "
                                 SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.IDGrupo, grupos.Fecha_Fin, grupos.Propietario
                                 FROM usuarios
@@ -139,7 +170,8 @@
                                                 echo '</p>';
                                                 echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
                                                     echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
-                                                        echo '<button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>';
+                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Editar</a>';
+                                                        //echo '<button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Expulsar</button>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>';
@@ -194,7 +226,7 @@
                                 }
                             }
                         }
-                        
+
                     ?>
 
                 <!-- Card Plantilla -->
@@ -223,7 +255,7 @@
                 </div>
             </div>
         </div>
-          
+
         <!-- Boton para agregar grupos. Solo perfil Profesor-->
         <?php
             if($_SESSION["rol"]=="p")
@@ -251,7 +283,7 @@
                             <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
                             <label for="fechareparto" required>Fecha del Reparo</label>
                             <!-- <input type="date" id="fechareparto" name="trip-start" value="2018-07-22"/> -->
-                            <?php $fechahoy = date('Y-m-d'); echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
+                            <?php echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
                             <input type="submit" id="crear" value="Crear" name="Crear">
                         </form>
                     </div>
@@ -259,36 +291,39 @@
                         <button class="btn btn-warning" type="button" data-dismiss="modal">
                             Cancelar
                         </button>
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Ventana Modal - Eliminar Grupo -->
-        <div class="modal fade" id="ventanaeliminar" tabindex="-1" role="dialog" aria-labelledby="tituloeliminargrupo" aria-hidden="true">
+
+        <!-- Ventana Modal - Editar Grupo -->
+        <div class="modal fade" id="ventanaeditargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloeditargrupo" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 id="tituloeliminargrupo">Eliminar Grupo</h5>
+                        <h5 id="tituloeditargrupo">Editar Grupo <?php echo ''.$_GET["id"].''?></h5>
                     </div>
                     <div class="modal-body">
                         <form method="POST">
-                            <label for="nombregrupo" required>Eliminar Grupo </label>
-                            <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
-                            <input type="submit" id="crear" value="Crear" name="Crear">
+                            <input type="hidden" id="idgrupo" value="<?php echo ''.$_GET["id"].''?>">
+                            <label for="nombregrupo" required>Nuevo nombre del Grupo</label>
+                            <input type="text" id="nombregrupo2" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
+                            <label for="fechareparto" required>Nueva Fecha del Reparo</label>
+                            <?php echo '<input type="date" id="fechareparto2" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
+                            <input type="submit" id="editar" value="Editar" name="Editar">
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-warning" type="button" data-dismiss="modal">
                             Cancelar
                         </button>
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>
-        
-        
-        
+
+
+
         <!-- Pie -->
         <footer class="p-3 mb-3 cancelarmarginbottom">
             <div class="container-footer">
@@ -333,27 +368,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 -->
-
-
-
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<script type="text/javascript" src="../assets/js/creargrupo.js"></script>
-
-
-
-
-
-
-
-
-
-
-
 
 
 

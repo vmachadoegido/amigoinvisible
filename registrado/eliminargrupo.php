@@ -15,7 +15,7 @@
         // Guardo la id obtenida en una variable.
         $idgrupo = $_GET["id"];
 
-        // Consulta 
+        // Consulta
         $consulta = "
             SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.IDGrupo, grupos.Propietario
             FROM usuarios
@@ -27,14 +27,14 @@
         // Comprueba que devuelva filas.
         if($objeto->comprobarFila()>0)
         {
-                
+
             $consulta = "DELETE FROM grupos WHERE IDGrupo='$idgrupo';";
             $objeto->realizarConsultas($consulta);
-            
+
             if($objeto->comprobar()>0) // Existe ese grupo y lo elimina
             {
                 $_SESSION["mensaje"] = "CorrectoE";
-                header("Location: http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php"); 
+                header("Location: http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
             }
             else // Ese grupo no existe. Fue eliminado antes.
             {
@@ -55,4 +55,4 @@
         header("Location: http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
     }
 
-    
+

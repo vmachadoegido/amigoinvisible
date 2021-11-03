@@ -110,5 +110,8 @@ a:hover {
     color: black;
 }
 
-
+label
+{
+    padding-right: 5px;
+}
 

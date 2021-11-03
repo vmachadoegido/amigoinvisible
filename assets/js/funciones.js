@@ -1,8 +1,8 @@
 
 //Esta funcion sirve para retornar a la pagina principal si no has iniciado sesion
 function nologeado()
-{  
-    // Mensaje de alerta 
+{
+    // Mensaje de alerta
     Swal.fire({
       icon: 'error',
       title: '¿Qué haces aqui?',
@@ -20,7 +20,7 @@ function nologeado()
           window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/");
       }
     })
-    
+
 }
 
 // Esta funcion sirve para mostrar un mensaje de error personalizado.
@@ -32,7 +32,7 @@ function error()
       icon: 'error',
       title: 'Oops',
       text: 'Hubo un error',
-      showConfirmButton: false,  
+      showConfirmButton: false,
       timer: 2000
     }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {
@@ -48,7 +48,7 @@ function correctoeliminado()
       icon: 'success',
       title: 'Correcto',
       text: 'Eliminado Correctamente',
-      showConfirmButton: false,  
+      showConfirmButton: false,
       timer: 2000
     }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {
