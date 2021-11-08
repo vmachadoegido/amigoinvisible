@@ -20,45 +20,46 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.css" integrity="sha512-CB+XYxRC7cXZqO/8cP3V+ve2+6g6ynOnvJD6p4E4y3+wwkScH9qEOla+BTHzcwB4xKgvWn816Iv0io5l3rAOBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <!-- Google -->
-			<!-- Host -->
-		<!-- <meta name="google-signin-client_id" content="919013948566-59sj3rmromelp2ojpvqd2ci8rv907idn.apps.googleusercontent.com"> -->
-			<!-- Local -->
-		<meta name="google-signin-client_id" content="919013948566-hl010ol0bg7pjvfktmdtgtgns9lv9qrk.apps.googleusercontent.com">
+            <!-- Host -->
+        <!-- <meta name="google-signin-client_id" content="919013948566-59sj3rmromelp2ojpvqd2ci8rv907idn.apps.googleusercontent.com"> -->
+            <!-- Local -->
+        <meta name="google-signin-client_id" content="919013948566-hl010ol0bg7pjvfktmdtgtgns9lv9qrk.apps.googleusercontent.com">
 
         <!-- Estilos Generales -->
         <link href="../assets/css/estilo.css" rel="stylesheet">
-        
+
         <!-- Libreria de Alertas -->
         <!-- Pagina https://sweetalert2.github.io -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
+
         <script src="../assets/js/funciones.js"></script>
 
     </head>
     <body>
-        
+
 <!--
-         Recoger el correo de la cookie 
-        <script> 
-            
-            // Creo la cookie correo ( No tendria que estar aqui, es de pruebas) 
+         Recoger el correo de la cookie
+        <script>
+
+            // Creo la cookie correo ( No tendria que estar aqui, es de pruebas)
             document.cookie = "correo=vmachadoegido.guadalupe@alumnado.fundacionloyola.net";
 
         </script>
 -->
-        
+
         <!-- Comprobar que exite la session correo -->
-        <?php 
+        <?php
             // Si no hay sesion correo, mensaje de alerta.
             if(!isset($_SESSION["correo"]))
             {
                 // Mensaje de alerta que no ha iniciado sesion
                 echo '<script> nologeado(); </script>';
             }
+            echo  $_SESSION["grupo"];
         ?>
-        
 
-        
+
+
         <!-- Cabezera - Navegador -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
             <!-- Imagen de la corpoativa -->
@@ -93,7 +94,7 @@
                         <br><br>
                         Para acceder a nuestro amigo invisible,<br> tienes que iniciar sersion con tu cuenta de google del colegio.
                     </p>
-                    
+
                     <!-- Texto indicando el usuario que has iniciado sesion -->
                     <?php
                         // Muestre el correo guardado de la sesion.

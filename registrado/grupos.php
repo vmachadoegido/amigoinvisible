@@ -33,22 +33,17 @@
         <!-- Pagina https://sweetalert2.github.io -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+        <!-- Librerias para jquere, google, boostrap, etc. -->
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
         <!-- Librerias personales -->
-
-
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<script type="text/javascript" src="../assets/js/creargrupo.js"></script>
-<!--<script type="text/javascript" src="../assets/js/editargrupo.js"></script>-->
-<script type="text/javascript" src="../assets/js/funciones.js"></script>
-
-
-
-
+        <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
+        <script type="text/javascript" src="../assets/js/funciones.js"></script>
 
     </head>
     <body>
@@ -86,21 +81,49 @@
             }
         ?>
 
-        <!-- Se comprueba si hay una id -->
+        <!-- Se comprueba si hay una id en la url -->
         <?php
 
+            // Comprueba si existe la variable $_GET["id"].
+            // En caso que exista entra en el if por lo contrario no hace nada.
             if(isset($_GET["id"]))
             {
-                //echo $_GET["id"];
+                // Comprueba si la variable $_GET["opcion"] es igual a 'e' (editar), en caso que no sea asi se va al else.
                 // Ejecuta la ventana modal de editar grupo. Lo hace visible.
-                echo '<script>
-                        $(document).ready(function(){
-                          $("#ventanaeditargrupo").modal();
-                        });
-                    </script>';
+                if($_GET["opcion"]=='ed')
+                {
+                    echo '<script>
+                            $(document).ready(function(){
+                              $("#ventanaeditargrupo").modal();
+                            });
+                        </script>';
+                }
+                else
+                {
+                    if($_GET["opcion"]=='in')
+                    {
+                        echo '<script>
+                            $(document).ready(function(){
+                              $("#ventanainvitargrupo").modal();
+                            });
+                        </script>';
+                    }
+                    else
+                    {
+                        if($_GET["opcion"]=='ex')
+                        {
+                            echo '<script>
+                                $(document).ready(function(){
+                                  $("#ventanaexpulsarinvitargrupo").modal();
+                                });
+                            </script>';
+                        }
+                    }
+                }
             }
         ?>
 
+        <div id="info"></div>
 
         <!-- Cabezera - Navegador -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
@@ -128,8 +151,6 @@
                     <h1 class="fw-light">Mis Grupos</h1>
                     <!-- Separador -->
                     <hr class="rayas">
-                    <!-- Contenido-->
-
                 </div>
             </div>
         </div>
@@ -138,15 +159,12 @@
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    <!-- Card Bucle -->
+                    <!-- Bucle Card -->
                     <?php
-
-                        //echo $_SESSION["rol"] = "a";
-
-                        // Si su rol es p
+                        // Si la variable $_SESSION["rol"] contiene una "p" entra al if, en caso contrario al else
                         if($_SESSION["rol"] == "p")
                         {
-                            // Consulta
+                            // Consulta, donde saca la informacion donde el usuario que se obtiene de $_SESSION["correo"], sea propietario.
                             $consulta = "
                                 SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.IDGrupo, grupos.Fecha_Fin, grupos.Propietario
                                 FROM usuarios
@@ -156,9 +174,13 @@
                             //print_r($consulta);
                             $objeto->realizarConsultas($consulta);
 
+                            // Comprueba si devuelve o no filas la consulta.
+                            // En caso devolver significa que ese usuario es propietario de un grupo y ejecuta en bucle la info.
+                            // En caso que no devuelva signicia que ese usuario no es propietario de ningun grupo.
                             if($objeto->comprobarFila()>0)
                             {
                                 // Extraer filas - Bucle para todos los grupos que gestione.
+                                // Extrae las filsa de la consulta, y lo va mostrando con sus diferenes opciones de gestion.
                                 while($fila = $objeto->extraerFilas())
                                 {
                                     echo '<div class="col cardtamano">';
@@ -166,14 +188,14 @@
                                             echo '<div class="card-body">';
                                                 echo '<h5 class="card-title">'.$fila["Nombre"].'</h5>';
                                                 echo '<p class="card-text">';
-                                                    echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
+                                                echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
                                                 echo '</p>';
                                                 echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
                                                     echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
-                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Editar</a>';
-                                                        //echo '<button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>';
-                                                        echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
-                                                        echo '<button type="button" class="btn btn-sm btn-outline-secondary">Expulsar</button>';
+                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ed" type="button" class="btn btn-sm btn-outline-secondary">Editar</a>';
+                                                        //echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
+                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=in" type="button" class="btn btn-sm btn-outline-secondary">Invitar</a>';
+                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex" type="button" class="btn btn-sm btn-outline-secondary">Expulsar</a>';
                                                         echo '<button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>';
                                                         echo '<a href="eliminargrupo.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Eliminar</a>';
                                                     echo '</div>';
@@ -186,7 +208,7 @@
                         }
                         else
                         {
-                            // Si es tipo a
+                            // Si la variable $_SESSION["rol"], contiene una "a" entra en el if, en caso que no lo sea no hace nada.
                             if($_SESSION["rol"] == "a")
                             {
                                 // Consulta. Donde busca que grupo pertenece el usuario.
@@ -200,10 +222,13 @@
                                 //print_r($consulta);
                                 $objeto->realizarConsultas($consulta);
 
-                                // Comprueba que devuelva filas.
+                                // Comprueba que devuelva filas la consulta.
+                                // Si devuelve filas mostrara los datos de los grupos que pertenece.
+                                // Si no devuelve filas no hara nada.
                                 if($objeto->comprobarFila()>0)
                                 {
-                                    // Extraer filas - Bucle para todos los grupos que gestione.
+                                    // Extraer filas - Bucle para todos los grupos que participa.
+                                    // Extrae las filas de la consulta y lo va mostrando en diferentes tarjetas.
                                     while($fila = $objeto->extraerFilas())
                                     {
                                         echo '<div class="col cardtamano">';
@@ -321,6 +346,85 @@
                 </div>
             </div>
         </div>
+
+        <!-- Ventana Modal - Agregar Invitado -->
+        <div class="modal fade" id="ventanainvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloinvitargrupo" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="tituloinvitargrupo">Invitar al Grupo <?php echo ''.$_GET["id"].''?></h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="invitadoform" method="POST">
+                            <input type="hidden" id="idgrupoinvitado" value="<?php echo ''.$_GET["id"].''?>">
+                            <label for="invitado[]">Correo del invitado</label>
+                            <input type="email" id="invitadocorreo" class="inputinvitar" name="invitado[]">
+                        </form>
+                        <button id="agregarfila">Agregar</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="invitar" class="btn btn-success" type="button" data-dismiss="modal">
+                            Invitar
+                        </button>
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventana Modal - Expulsar Invitado -->
+        <div class="modal fade" id="ventanaexpulsarinvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloexpulsarinvitargrupo" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="tituloexpulsarinvitargrupo">Expulsar del Grupo <?php echo ''.$_GET["id"].''?></h5>
+                    </div>
+                    <div class="modal-body">
+                        <?php
+
+                            if($_GET["opcion"]=='ex')
+                            {
+                                // Consulta. Busca los correo que estan invitado al grupo selecionado.
+                                $consulta = "SELECT * FROM invitado WHERE IDGrupo = '".$_GET["id"]."';";
+
+                                $objeto->realizarConsultas($consulta);
+
+                                if($objeto->comprobarFila()>0)
+                                {
+                                    while($fila = $objeto->extraerFilas())
+                                    {
+                                        echo $fila["Correo"];
+                                    }
+                                }
+                                else
+                                {
+                                    echo '<script> error(); </script>';
+                                }
+                            }
+
+
+
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="expulsar" class="btn btn-success" type="button" data-dismiss="modal">
+                            Expulsar
+                        </button>
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
 
 
 

@@ -110,8 +110,19 @@ a:hover {
     color: black;
 }
 
-label
+/*Seperacion del label, de la ventana modal invitar*/
+.labelinvitar
 {
-    padding-right: 5px;
+    margin-top: 9px;
+    margin-right: 4px;
 }
 
+.inputinvitar
+{
+    margin-right: 6px;
+}
+
+button
+{
+    border-width: 1px;
+}

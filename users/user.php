@@ -54,14 +54,14 @@
 
                     // Extraigo los datos sacado de la consulta (linea 40) y lo guardo en una variable.
                     $fila = $objeto->extraerFilas();
-                    
+
                     // Creo una raid, donde guardare que esta logeado y los datos de la BD.
                     $respuesta["logged"] = true;
                     $respuesta["info"]   = $fila;
 
                     // Imprime los datos de la BD. signin.js lo lee.
                     print_r($respuesta);
-                    
+
                     // Se guarda el correo y el rol del usuario.
                     $_SESSION["correo"] = $fila["Correo"];
                     $_SESSION["rol"] = $fila["Tipo"];
@@ -100,11 +100,11 @@
 
                             // Imprime los datos de la BD. signin.js lo lee.
                             print_r($respuesta);
-                            
+
                             // Se guarda el correo y el rol del usuario.
                             $_SESSION["correo"] = $fila["Correo"];
                             $_SESSION["rol"] = $fila["Tipo"];
-                            
+
                         }
                         else
                         {
@@ -144,7 +144,7 @@
 
                     // Imprime los datos de la BD. signin.js lo lee.
                     print_r($respuesta);
-                    
+
                     // Se guarda el correo y el rol del usuario.
                     $_SESSION["correo"] = $fila["Correo"];
                     $_SESSION["rol"] = $fila["Tipo"];
@@ -183,11 +183,11 @@
 
                             // Imprime los datos de la BD. signin.js lo lee.
                             print_r($respuesta);
-                            
+
                             // Se guarda el correo y el rol del usuario.
                             $_SESSION["correo"] = $fila["Correo"];
                             $_SESSION["rol"] = $fila["Tipo"];
-                        
+
                         }
                         else
                         {
