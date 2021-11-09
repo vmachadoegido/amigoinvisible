@@ -25,7 +25,7 @@
             // Por lo tanto no lo guarda y lo ignora.
             if($objeto->comprobar()>0)
             {
-                echo 'console.log("Ese correo ya esta invitado.")';
+                echo 'Ese correo ya esta invitado.';
             }
             else // Si no devuelve filas, significa que ese correo no fue invitado a ese grupo y lo introduce.
             {
@@ -58,7 +58,7 @@
 
                     mail($valor, $subject, $message, $headers);
 
-                    echo 'console.log("Enviado Correo")';
+                    echo 'Enviado Correo';
                 }
                 else
                 {
@@ -68,7 +68,7 @@
         }
         else
         {
-            echo 'console.log("El correo de la session y el del invitado son iguales.")';
+            echo 'El correo de la session y el del invitado son iguales.';
         }
     }
 

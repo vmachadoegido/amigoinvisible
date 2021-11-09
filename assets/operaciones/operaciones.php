@@ -15,7 +15,7 @@
         function __construct()
         {
             $this->mysqli = new mysqli(servidor, usuario, password, basedatos);
-            
+
             if(!$this->mysqli)
             {
                 echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
@@ -34,7 +34,7 @@
         }
 
         /**
-            Funcion para realizar la consulta.
+            Funcion para realizar consultas.
             Guarda el ResultSet en $this->resultado
             @param sql {String} Sentencia SQL para la consulta.
         */
