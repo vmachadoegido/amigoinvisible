@@ -88,7 +88,7 @@
             // En caso que exista entra en el if por lo contrario no hace nada.
             if(isset($_GET["id"]))
             {
-                // Comprueba si la variable $_GET["opcion"] es igual a 'e' (editar), en caso que no sea asi se va al else.
+                // Comprueba si la variable $_GET["opcion"] es igual a 'ed' (editar), en caso que no sea asi se va al else.
                 // Ejecuta la ventana modal de editar grupo. Lo hace visible.
                 if($_GET["opcion"]=='ed')
                 {
@@ -100,6 +100,7 @@
                 }
                 else
                 {
+                    // Opcion para invitado
                     if($_GET["opcion"]=='in')
                     {
                         echo '<script>
@@ -110,6 +111,7 @@
                     }
                     else
                     {
+                        // Opcion para expulsar
                         if($_GET["opcion"]=='ex')
                         {
                             echo '<script>
@@ -122,6 +124,91 @@
                 }
             }
         ?>
+
+        <!-- Revisa si esta invitado algun grupo y lo registra -->
+        <?php
+            // Guardo la variable de la sesion del correo.
+            $correo = $_SESSION["correo"];
+
+            // Consulta. Buscar si ese correo esta invitado algun grupo.
+            $consulta = "
+                SELECT *
+                FROM invitado
+                WHERE Correo = '".$correo."';
+            ";
+            $objeto->realizarConsultas($consulta);
+
+            // Si devuelve filas, significa que ese correo esta invitado algun grupo y entra en el if.
+            if($objeto->comprobarFila()>0)
+            {
+                // Se extrae el resultado de la consulta y se guarda en bucle en $fila, y a continuacion se va guardando la IDGrupo en una array
+                while($fila = $objeto->extraerFilas())
+                {
+                    // Guardo el dato recibido de la fila IDGrupo en una variable.
+                    $array[] = $fila["IDGrupo"];
+
+                }
+                // Se recorre la array con los valores de la IDGrupos, que es invitado el usuario.
+                foreach($array as $valor)
+                {
+                    //echo $valor.'-';
+                    // Consulta. Comprueba si el correo y el grupo de la invitacion ya esta fue registrado o no.
+                    $consulta ="
+                        SELECT usuarios.IDUsuario, usuarios.Correo, grupos.IDGrupo, grupos.Propietario
+                        FROM usuarios
+                        INNER JOIN usuariogrupo ON usuariogrupo.IDUsuario = usuarios.IDUsuario
+                        INNER JOIN grupos ON grupos.IDGrupo = usuariogrupo.IDGrupo
+                        WHERE usuarios.Correo = 'vmachadoegido.guadalupe@alumnado.fundacionloyola.net' AND grupos.IDGrupo = '".$valor."';
+                    ";
+                    //print($consulta);
+                    //echo '<br><br>';
+                    $objeto->realizarConsultas($consulta);
+
+                    // Si devuelve filas, significa que ese correo ya esta registrado en ese grupo.
+                    if($objeto->comprobarFila()>0)
+                    {
+                        echo '<script> console.log("Ya esta registrado en el grupo") </script>';
+                    }
+                    else // Si entra aqui significa, que no esta registrado en el grupo.
+                    {
+                        echo '<script> console.log("No esta registrado en el grupo") </script>';
+
+                        $consulta ="
+                            SELECT IDUsuario, Correo
+                            FROM usuarios
+                            WHERE usuarios.Correo = '".$correo."';
+                        ";
+                        //print($consulta);
+
+                        $objeto->realizarConsultas($consulta);
+                        if($objeto->comprobarFila()>0)
+                        {
+                            // Extrar las filas de la consulta.
+                            $fila = $objeto->extraerFilas();
+
+                            //echo '<br>IDUsuario: '.$fila["IDUsuario"].'-'.$valor.'<br><br>';
+                            // Se guarda la IDUsuario en una variable.
+                            $idusuario = $fila["IDUsuario"];
+
+                            // Se introduce la IDUsurio y la IDGrupo del invitado
+                            $consulta = "INSERT INTO usuariogrupo (IDUsuario, IDGrupo) VALUES ('".$idusuario."', '".$valor."')";
+                            $objeto->realizarConsultas($consulta);
+
+                            if($objeto->comprobar()>0)
+                            {
+                                echo '<script> console.log("Se agrego el usuario al grupo") </script>';
+                            }
+                            else
+                            {
+                                echo '<script> console.log("Hubo un problema al agregar el usuario al grupo") </script>';
+                            }
+                        }
+                    }
+                }
+            }
+        ?>
+
+
 
         <div id="info"></div>
 
