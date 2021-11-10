@@ -4,7 +4,6 @@
 
     // Traerme los datos de conexion.
     require("../assets/operaciones/operaciones.php");
-
     // Crear el objeto de operaciones.
     $objeto=new operaciones();
 
@@ -36,14 +35,15 @@
 
         <!-- Librerias para jquere, google, boostrap, etc. -->
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
         <!-- Librerias personales -->
-        <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
         <script type="text/javascript" src="../assets/js/funciones.js"></script>
+        <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
+
 
     </head>
     <body>
@@ -81,51 +81,7 @@
             }
         ?>
 
-        <!-- Se comprueba si hay una id en la url -->
-        <?php
-
-            // Comprueba si existe la variable $_GET["id"].
-            // En caso que exista entra en el if por lo contrario no hace nada.
-            if(isset($_GET["id"]))
-            {
-                // Comprueba si la variable $_GET["opcion"] es igual a 'ed' (editar), en caso que no sea asi se va al else.
-                // Ejecuta la ventana modal de editar grupo. Lo hace visible.
-                if($_GET["opcion"]=='ed')
-                {
-                    echo '<script>
-                            $(document).ready(function(){
-                              $("#ventanaeditargrupo").modal();
-                            });
-                        </script>';
-                }
-                else
-                {
-                    // Opcion para invitado
-                    if($_GET["opcion"]=='in')
-                    {
-                        echo '<script>
-                            $(document).ready(function(){
-                              $("#ventanainvitargrupo").modal();
-                            });
-                        </script>';
-                    }
-                    else
-                    {
-                        // Opcion para expulsar
-                        if($_GET["opcion"]=='ex')
-                        {
-                            echo '<script>
-                                $(document).ready(function(){
-                                  $("#ventanaexpulsarinvitargrupo").modal();
-                                });
-                            </script>';
-                        }
-                    }
-                }
-            }
-        ?>
-
-        <!-- Revisa si esta invitado algun grupo y lo registra -->
+         <!-- Revisa si esta invitado algun grupo y lo registra -->
         <?php
             // Guardo la variable de la sesion del correo.
             $correo = $_SESSION["correo"];
@@ -136,6 +92,7 @@
                 FROM invitado
                 WHERE Correo = '".$correo."';
             ";
+            //print_r($consulta);
             $objeto->realizarConsultas($consulta);
 
             // Si devuelve filas, significa que ese correo esta invitado algun grupo y entra en el if.
@@ -167,11 +124,11 @@
                     // Si devuelve filas, significa que ese correo ya esta registrado en ese grupo.
                     if($objeto->comprobarFila()>0)
                     {
-                        echo '<script> console.log("Ya esta registrado en el grupo") </script>';
+                        echo '<script> console.log("Ya esta registrado en el grupo"); </script>';
                     }
                     else // Si entra aqui significa, que no esta registrado en el grupo.
                     {
-                        echo '<script> console.log("No esta registrado en el grupo") </script>';
+                        echo '<script> console.log("No esta registrado en el grupo"); </script>';
 
                         $consulta ="
                             SELECT IDUsuario, Correo
@@ -194,13 +151,14 @@
                             $consulta = "INSERT INTO usuariogrupo (IDUsuario, IDGrupo) VALUES ('".$idusuario."', '".$valor."')";
                             $objeto->realizarConsultas($consulta);
 
+                            // Si devuelve filas significa que se inserto correctamente.
                             if($objeto->comprobar()>0)
                             {
-                                echo '<script> console.log("Se agrego el usuario al grupo") </script>';
+                                echo '<script> console.log("Se agrego el usuario al grupo"); </script>';
                             }
-                            else
+                            else // No se inserto los datos.
                             {
-                                echo '<script> console.log("Hubo un problema al agregar el usuario al grupo") </script>';
+                                echo '<script> console.log("Hubo un problema al agregar el usuario al grupo"); </script>';
                             }
                         }
                     }
@@ -208,7 +166,111 @@
             }
         ?>
 
+        <!-- Se comprueba si hay una id en la url -->
+        <?php
 
+            // Comprueba si existe la variable $_GET["id"].
+            // En caso que exista entra en el if por lo contrario no hace nada.
+            if(isset($_GET["id"]))
+            {
+                // Comprueba si la variable $_GET["opcion"] es igual a 'ed' (editar), en caso que no sea asi se va al else.
+                // Ejecuta la ventana modal de editar grupo. Lo hace visible.
+                if($_GET["opcion"]=='ed')
+                {
+                    echo '<script>
+                            $(document).ready(function(){
+                              $("#ventanaeditargrupo").modal();
+                            });
+                        </script>';
+                }
+                else
+                {
+                    // Opcion para invitado
+                    if($_GET["opcion"]=='in')
+                    {
+                        echo '<script>
+                            $(document).ready(function(){
+                              $("#ventanainvitargrupo").modal();
+                            });
+                        </script>';
+                    }
+                    else
+                    {
+                        // Opcion para expulsar
+                        if($_GET["opcion"]=='ex' and isset($_GET["correo"]) and isset($_GET["id"]))
+                        {
+                            // Consulta. Comprueba si existe en la invitacion con ese grupo
+                            $consulta ="
+                                SELECT *
+                                FROM invitado
+                                WHERE Correo = '".$_GET["correo"]."' AND IDGrupo = '".$_GET["id"]."';
+                            ";
+                            //print($consulta);
+                            $objeto->realizarConsultas($consulta);
+
+                            // Si devuelve fila significa que esta en la tabla invitado.
+                            if($objeto->comprobarFila()>0)
+                            {
+
+                                // Consulta. Eliminar la invitacion de esa persona.
+                                $consulta = "DELETE FROM invitado WHERE invitado.Correo = '".$_GET["correo"]."';";
+                                //print($consulta);
+                                $objeto->realizarConsultas($consulta);
+
+                                // Si devuelve fila significa que fue eliminado corectamente.
+                                if($objeto->comprobar()>0)
+                                {
+                                    echo '<script> console.log("Fue eliminado la invitacion."); </script>';
+
+                                    // Consulta. Comprueba que ese usuario pertenece a ese grupo.
+                                    $consulta ="
+                                        SELECT usuarios.IDUsuario, usuarios.Correo, usuariogrupo.IDUsuario, usuariogrupo.IDGrupo
+                                        FROM usuarios
+                                        INNER JOIN usuariogrupo ON usuariogrupo.IDUsuario = usuarios.IDUsuario
+                                        WHERE usuarios.Correo = '".$_GET["correo"]."' AND usuariogrupo.IDGrupo = '".$_GET["id"]."';
+                                    ";
+                                    //print($consulta);
+                                    $objeto->realizarConsultas($consulta);
+
+                                    // Si devuelve fila significa que ese correo pertenecia a un grupo.
+                                    if($objeto->comprobarFila()>0)
+                                    {
+                                        // Consulta. Elimina al usuario del grupo.
+                                        $consulta = "DELETE FROM usuariogrupo WHERE usuariogrupo.IDGrupo = '".$_GET["id"]."'";
+                                        $objeto->realizarConsultas($consulta);
+
+                                        // Si devuelve filas significa que fue borraro corectamente.
+                                        if($objeto->comprobar()>0)
+                                        {
+                                            echo '<script> console.log("Fue eliminado del grupo."); </script>';
+                                            echo '<script> correctoexpulsado(); </script>';
+                                        }
+
+                                    }
+                                    else // Si no devuelve filas, significa que ese usuario no se registro en la web.
+                                    {
+                                        echo '<script> correctoexpulsado(); </script>';
+                                    }
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if($_GET["opcion"]=='ex')
+                            {
+                                echo '<script>
+                                    $(document).ready(function(){
+                                      $("#ventanaexpulsarinvitargrupo").modal();
+                                    });
+                                </script>';
+                            }
+
+                        }
+                    }
+                }
+            }
+        ?>
 
         <div id="info"></div>
 
@@ -463,7 +525,7 @@
 
         <!-- Ventana Modal - Expulsar Invitado -->
         <div class="modal fade" id="ventanaexpulsarinvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloexpulsarinvitargrupo" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 id="tituloexpulsarinvitargrupo">Expulsar del Grupo <?php echo ''.$_GET["id"].''?></h5>
@@ -482,7 +544,16 @@
                                 {
                                     while($fila = $objeto->extraerFilas())
                                     {
-                                        echo $fila["Correo"];
+                                        echo '<table>';
+                                            echo '<tr>';
+                                                echo '<td>';
+                                                    echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex&correo='.$fila["Correo"].'">';
+                                                        echo '<i class="fa fa-trash-o" aria-hidden="true"></i> ';
+                                                    echo '</a>';
+                                                    echo $fila["Correo"];
+                                                echo '</td>';
+                                            echo '</tr>';
+                                        echo '</table>';
                                     }
                                 }
                                 else
@@ -490,9 +561,6 @@
                                     echo '<script> error(); </script>';
                                 }
                             }
-
-
-
                         ?>
                     </div>
                     <div class="modal-footer">
