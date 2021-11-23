@@ -52,7 +52,7 @@
             // Si es tipo p
             if($tipo == "p")
             {
-
+                // Crea el grupo.
                 $consulta = "INSERT INTO grupos (Nombre, Fecha_Inicio, Fecha_Fin, Propietario) VALUES ('".$nombregrupo."', '".$fechahoy."', '".$fechareparto."', '".$usuario."');";
                 //print_r($consulta);
 

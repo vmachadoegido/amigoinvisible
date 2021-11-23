@@ -14,8 +14,7 @@ $(document).ready(function () {
         // funciono o no al crearlo.
         $.post("../registrado/creargrupo.php", {
             nombregrupo: nombregrupo,
-            fechareparto: fechareparto,
-            correo: correo
+            fechareparto: fechareparto
         }, function(respuesta){
 //            $("#info").text(respuesta)
             console.log(respuesta)
@@ -199,5 +198,7 @@ $(document).ready(function () {
             }
         });
     });
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 });

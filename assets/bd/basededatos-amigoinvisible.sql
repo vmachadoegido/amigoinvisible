@@ -64,7 +64,28 @@ CREATE TABLE invitado
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 
+--
+-- Tabla Regalo
+--
 
+CREATE TABLE regalo
+(
+    IDRegalo INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(512) NOT NULL,
+    Volumen TINYINT UNSIGNED NOT NULL,
+    Formato VARCHAR(10) NOT NULL,
+    Ruta VARCHAR(512) NOT NULL,
+    Fecha_Subida date NOT NULL,
+    Destinatario SMALLINT UNSIGNED NULL,
+    Grupo SMALLINT UNSIGNED NOT NULL,
+    Usuario SMALLINT UNSIGNED NOT NULL,
+
+
+    FOREIGN KEY (Destinatario) REFERENCES regalo(Usuario),
+    FOREIGN KEY (Grupo) REFERENCES grupos(IDGrupo) ON DELETE CASCADE,
+    FOREIGN KEY (Usuario) REFERENCES usuarios(IDUsuario) ON DELETE CASCADE
+
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 
 

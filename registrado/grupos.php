@@ -35,14 +35,14 @@
 
         <!-- Librerias para jquere, google, boostrap, etc. -->
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
         <!-- Librerias personales -->
-        <script type="text/javascript" src="../assets/js/funciones.js"></script>
         <script type="text/javascript" src="../assets/js/creargrupo.js"></script>
+        <script type="text/javascript" src="../assets/js/funciones.js"></script>
 
 
     </head>
@@ -244,6 +244,27 @@
                                         {
                                             echo '<script> console.log("Fue eliminado del grupo."); </script>';
                                             echo '<script> correctoexpulsado(); </script>';
+                                            echo "<script>
+
+                                                Swal.fire({
+                                                  icon: 'success',
+                                                  title: 'Correcto',
+                                                  text: 'Expulsado Correctamente',
+                                                  confirmButtonColor: '#3085d6',
+                                                  cancelButtonColor: '#d33',
+                                                  confirmButtonText: 'Actualizar'
+                                                }).then((result) => {
+                                                  if (result.isConfirmed)
+                                                  {
+                                                        window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+                                                  }
+                                                  else
+                                                  {
+                                                        window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+                                                  }
+                                                })
+
+                                            </script>";
                                         }
 
                                     }
@@ -265,7 +286,28 @@
                                     });
                                 </script>';
                             }
-
+                            else
+                            {
+                                if($_GET["opcion"]=='subir')
+                                {
+                                    echo '<script>
+                                        $(document).ready(function(){
+                                          $("#ventanasbuirregalo").modal();
+                                        });
+                                    </script>';
+                                }
+                                else
+                                {
+                                    if($_GET["opcion"]=='emp')
+                                    {
+                                        echo '<script>
+                                            $(document).ready(function(){
+                                              $("#ventanaemparejar").modal();
+                                            });
+                                        </script>';
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -345,7 +387,7 @@
                                                         //echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=in" type="button" class="btn btn-sm btn-outline-secondary">Invitar</a>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex" type="button" class="btn btn-sm btn-outline-secondary">Expulsar</a>';
-                                                        echo '<button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>';
+                                                        echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=emp" type="button" class="btn btn-sm btn-outline-secondary">Emparejar</a>';
                                                         echo '<a href="eliminargrupo.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Eliminar</a>';
                                                     echo '</div>';
                                                 echo '</div>';
@@ -388,9 +430,9 @@
                                                         echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
                                                     echo '</p>';
                                                     echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
-                                                        echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3">';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</button>';
-                                                            echo '<button type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</button>';
+                                                        echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
+                                                            echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=subir" type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</a>';
+                                                            echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ver" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
                                                         echo '</div>';
                                                     echo '</div>';
                                                 echo '</div>';
@@ -456,7 +498,6 @@
                             <label for="nombregrupo" required>Nombre del Grupo </label>
                             <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
                             <label for="fechareparto" required>Fecha del Reparo</label>
-                            <!-- <input type="date" id="fechareparto" name="trip-start" value="2018-07-22"/> -->
                             <?php echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
                             <input type="submit" id="crear" value="Crear" name="Crear">
                         </form>
@@ -480,7 +521,7 @@
                     <div class="modal-body">
                         <form method="POST">
                             <input type="hidden" id="idgrupo" value="<?php echo ''.$_GET["id"].''?>">
-                            <label for="nombregrupo" required>Nuevo nombre del Grupo</label>
+                            <label for="nombregrupo2" required>Nuevo nombre del Grupo</label>
                             <input type="text" id="nombregrupo2" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
                             <label for="fechareparto" required>Nueva Fecha del Reparo</label>
                             <?php echo '<input type="date" id="fechareparto2" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
@@ -549,7 +590,7 @@
                                                 echo '<td>';
                                                     echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex&correo='.$fila["Correo"].'">';
                                                         echo '<i class="fa fa-trash-o" aria-hidden="true"></i> ';
-                                                    echo '</a>';
+                                                    echo '</a>  ';
                                                     echo $fila["Correo"];
                                                 echo '</td>';
                                             echo '</tr>';
@@ -575,10 +616,323 @@
             </div>
         </div>
 
+        <!-- Ventana Modal - Subir Regalo -->
+        <div class="modal fade" id="ventanasbuirregalo" tabindex="-1" role="dialog" aria-labelledby="titulosubirregalo" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="titulosubirregalo">Subir Regalo <?php echo 'grupo '.$_GET["id"].''?></h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="hidden" id="usuarioregalo" value="<?php echo ''.$_SESSION["correo"].''; ?>"/>
+                            <input type="hidden" id="gruporegalo" value="<?php echo ''.$_GET["id"].''; ?>"/>
+                            <label for="regalo">Sube tu Regalo.</label>
+                            <input type="file" name="archivo" id="regalo" maxlength="45" required/>
+                            <input type="submit" id="subiregalo" value="Subir" name="Subir">
+                        </form>
+                        <?php
+                            // Si existe la variable $_FILES['archivo'] entra en el if.
+                            if(isset($_FILES['archivo']))
+                            {
+                                // Traer las operaciones de ftp
+                                require("../assets/operaciones/operaciones_ftp.php");
+                                $objetoftp = new operaciones_ftp();
+
+                                // Guardar en variables los datos que se enviaran.
+                                $nombretemp = $_FILES['archivo']['tmp_name'];
+                                $nombreregalo = $_FILES['archivo']['name'];
+                                $formato = $_FILES['archivo']['type'];
+                                $volumen = $_FILES['archivo']['size'];
+                                $grupoid = $_GET["id"];
+                                $correousuario = $_SESSION["correo"];
+                                $fechahoy = date('Y-m-d');
+
+                                // Consulta la cual devuelve filas si ese usuario ya subio algun regalo.
+                                $consulta = "
+                                    SELECT usuarios.Correo, usuarios.IDUsuario, regalo.IDRegalo, regalo.Grupo, regalo.Nombre
+                                    FROM usuarios, regalo
+                                    WHERE usuarios.Correo = '".$correousuario."' AND regalo.Grupo = $grupoid;
+                                ";
+
+                                //echo $consulta;
+                                $objeto->realizarConsultas($consulta);
+
+                                // Si devuelve filas, significa que ese usuario ya subio algun correo.
+                                if($objeto->comprobarFila()>0)
+                                {
+                                    // Se extrae las filas.
+                                    $fila = $objeto->extraerFilas();
+
+                                    // Se guarda en una variable el nombre del regalo anterior.
+                                    $nombreregaloanitguo = $fila["Nombre"];
+                                    $idusaruio = $fila["IDUsuario"];
+
+                                    // Subo el nuevo regalo al server.
+                                    // Actualizo la BD.
+                                        // Guardo el nombre del regalo.
+                                        // Elimino el antiguo regalo.
+
+                                    // Sirve para subir archivos.
+                                    if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                    {
+                                        //Sirve para eliminar archivos
+                                        if($objetoftp->eliminararchivo($grupoid, $correousuario, $nombreregaloanitguo) == "Si")
+                                        {
+                                            // Consulta. Actualizar los datos de la BD con el nuevo regalo.
+                                            $consulta = "
+                                                UPDATE regalo
+                                                SET
+                                                Nombre = '$nombreregalo',
+                                                Volumen = $volumen,
+                                                Formato = '$formato',
+                                                Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
+                                                Fecha_Subida = '$fechahoy',
+                                                Grupo = $grupoid,
+                                                Usuario = $idusaruio
+                                                WHERE Grupo = $grupoid AND Usuario = $idusaruio;
+                                            ";
+
+                                            //cho $consulta;
+                                            $objeto->realizarConsultas($consulta);
+
+                                            // Si deuvelve filas significa que se actualizo los datos.
+                                            if($objeto->comprobar()>0)
+                                            {
+                                                echo '<script> correctosubido(); </script>';
+                                            }
+                                            else
+                                            {
+                                                echo '<script> error(); </script>';
+                                            }
+                                        }
+                                        else
+                                        {
+                                            echo '<script> error(); </script>';
+                                        }
+                                    }
+                                    else // Si fallo la subida del archivo.
+                                    {
+                                        echo '<script> error(); </script>';
+                                    }
+                                }
+                                else // Si entra aqui significa que es la primera subida de regalo.
+                                {
+                                    // Consulta para sacar la ID del usuario.
+                                    $consulta = "
+                                        SELECT IDUsuario, Correo
+                                        FROM usuarios
+                                        WHERE Correo = '$correousuario';
+                                    ";
+                                    //echo $consulta;
+                                    $objeto->realizarConsultas($consulta);
+
+                                    // Si devuelve filas significa que existe ese usuario.
+                                    if($objeto->comprobarFila()>0)
+                                    {
+                                        // Extraigo las filas de la consulta
+                                        $fila = $objeto->extraerFilas();
+
+                                        // Guardo en una variable la id del usuario.
+                                        $idusaruio = $fila["IDUsuario"];
 
 
+                                        // Subimos el regalo en el servidor, en la carpeta del grupo y su correo.
+                                        if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                        {
+                                            //echo '<script> correctosubido(); </script>';
+
+                                            // Consulta. Inserta los datos en la tabla regalo con los datos recibido del formulario de subida de regalo.
+                                            $consulta = "
+                                                INSERT INTO regalo (Volumen, Nombre, Formato, Ruta, Fecha_Subida, Grupo, Usuario)
+                                                VALUES ($volumen, '$nombreregalo', '$formato', 'amigoinvisible/regalos/$grupoid/$correousuario', '$fechahoy', $grupoid, $idusaruio);
+
+                                            ";
+                                            $objeto->realizarConsultas($consulta);
+                                            //echo $consulta;
+
+                                            // Si devuelve filas, significa que se agrego en la bd los datos.
+                                            if($objeto->comprobar()>0)
+                                            {
+
+                                                // Sirve para subir archivos.
+                                                if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                                {
+                                                    echo '<script> correctosubido(); </script>';
+                                                }
+                                                else
+                                                {
+                                                    echo '<script> error(); </script>';
+                                                }
+                                            }
+                                            else
+                                            {
+                                                echo '<script> error(); </script>';
+                                            }
+                                        }
+                                        else
+                                        {
+                                            echo '<script> error(); </script>';
+                                        }
+                                    }
+                                    else
+                                    {
+                                        echo '<script> error(); </script>';
+                                    }
+                                }
+                            }
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
+        <!-- Ventana Modal - Emparejar -->
+        <div class="modal fade" id="ventanaemparejar" tabindex="-1" role="dialog" aria-labelledby="tituloemparejar" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="tituloemparejar">Emparejamiento <?php echo ''.$_GET["id"].''?></h5>
+                    </div>
+                    <div class="modal-body">
+                        <?php
+
+                            // Consulta. Sirve para mostrar los usuarios del grupo.
+                            $consulta = "
+                                SELECT grupos.IDGrupo, usuarios.IDUsuario, usuarios.Correo
+                                FROM grupos
+                                INNER JOIN usuariogrupo ON usuariogrupo.IDGrupo = grupos.IDGrupo
+                                INNER JOIN usuarios ON usuarios.IDUsuario = usuariogrupo.IDUsuario
+                                WHERE grupos.IDGrupo = ".$_GET["id"].";
+                            ";
+
+                            //echo $consulta;
+                            $objeto->realizarConsultas($consulta);
+
+                            // Si devuelve filas significa que ese grupo tiene usuarios.
+                            if($objeto->comprobarFila()>0)
+                            {
+                                // Guarda todos los correo en una array.
+                                while($fila = $objeto->extraerFilas())
+                                {
+                                    // Va guardando lo obtenido de la fila Correo en la array.
+                                    $array[] = $fila["Correo"];
+                                }
+
+
+                                // Visualizar la array, con la lista de usuarios del grupo.
+                                /*
+                                foreach($array as $valores)
+                                {
+                                    echo $valores.'<br>';
+                                }
+                                */
+
+                                // Contar el tamaño de la array y guardarlo.
+                                $contador = count($array);
+                                //echo $contador;
+
+                                // Crear una array, la cual ire agregando numeros hasta llegar a $contador.
+                                for ($i = 1; $i <= $contador; $i++)
+                                {
+                                    // Va guardando el contador en la array.
+                                    $arraycontador[] = $i;
+                                }
+
+                                // Visualizar la array contador.
+                                /*
+                                foreach($arraycontador as $valor)
+                                {
+                                    echo $valor.' ';
+                                }
+                                */
+
+                                $i = 1;
+                                foreach($array as $valor)
+                                {
+
+                                    $random=array_rand($arraycontador,1);
+
+                                    while($valor == $array[$random])
+                                    {
+                                        $random=array_rand($arraycontador,1);
+                                    }
+
+
+                                    echo '<table class="table ">';
+                                      echo '<thead>';
+                                        echo '<tr>';
+                                          echo '<th scope="col">Parejas</th>';
+                                          echo '<th scope="col">Primero</th>';
+                                          echo '<th scope="col">Segundo</th>';
+                                          echo '<th scope="col">Regalo</th>';
+                                        echo '</tr>';
+                                      echo '</thead>';
+                                      echo '<tbody>';
+                                        echo '<tr>';
+                                          echo '<th>'.$i.'</th>';
+                                          echo '<td colspan="2">'.$valor.'</td>';
+                                          echo '<td colspan="2">'.$array[$random].'</td>';
+                                          echo '<td><a href="">Regalo</a></td>';
+                                        echo '</tr>';
+                                    echo '</table>';
+
+                                    //echo $valor.'/'.$array[$random].'<br/>';
+
+                                    unset($arraycontador[$random]);
+
+                                    $i++;
+
+
+                                }
+
+                                echo '<button class="btn btn-warning" type="button" data-dismiss="modal">Repartir</button>';
+
+                            }
+
+//                                $array = array('User1', 'User2', 'User3', 'User4', 'User5', 'User6', 'User7');
+//
+//                                $contador = count($array);
+//
+//                                for ($i = 1; $i <= $contador; $i++)
+//                                {
+//                                    $arraycontador[] = $i;
+//                                }
+//
+//                                foreach($arraycontador as $valor)
+//                                {
+//                                    echo $valor.' ';
+//                                }
+//
+//                                echo '<br>';
+//
+//                                foreach($array as $valor)
+//                                {
+//                                    $random=array_rand($arraycontador,1);
+//
+//                                    echo $valor.'/'.$array[$random].'<br/>';
+//
+//                                    unset($arraycontador[$random]);
+//                                }
+
+
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <?php echo '<a href="grupos.php?id='.$_GET["id"].'&opcion=emp" class="btn btn-success" type="button">Volver a emparejar</a>'; ?>
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -620,13 +974,3 @@
         </footer>
     </body>
 </html>
-
-<!-- Librerias necesarias. JQuery, Popper y Boostrap-->
-<!--
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
--->
-
-
-

@@ -29,7 +29,8 @@ function error()
 {
     Swal.fire({
       icon: 'error',
-      text: 'Oops',
+      title: 'Oops',
+      text: 'Algo ocurrio X.X',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Actualizar'
@@ -89,3 +90,29 @@ function correctoexpulsado()
       }
     })
 }
+
+function correctosubido()
+{
+    // Mensaje de alerta
+    Swal.fire({
+      icon: 'success',
+      text: 'Subido regalo Correctamente',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Actualizar'
+    }).then((result) => {
+      if (result.isConfirmed)
+      {
+            window.location.href = "https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php";
+      }
+      else
+      {
+            window.location.href = "https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php";
+      }
+    })
+}
+
+
+
+
+

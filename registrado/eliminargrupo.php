@@ -34,6 +34,9 @@
             if($objeto->comprobar()>0) // Existe ese grupo y lo elimina
             {
                 $_SESSION["mensaje"] = "CorrectoE";
+
+
+
                 header("Location: http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
             }
             else // Ese grupo no existe. Fue eliminado antes.
