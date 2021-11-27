@@ -200,5 +200,27 @@ $(document).ready(function () {
     });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Cuando se oulsa el boton invitar, de la ventana modal invitar.
+    $("#repartir").click(function(event){
 
+		
+		
+		
+			for(var i=0;i<jArray.length;i++)
+			{
+				//document.getElementById("contenedor").innerHTML += "Nombre " + jArray[i] + " ";
+				alert(jArray[i]); 
+			}
+		
+			for(var i=0;i<jArray2.length;i++)
+			{
+				//document.getElementById("contenedor").innerHTML += "Nombre " + jArray[i] + " ";
+				alert(jArray2[i]); 
+			}
+
+		
+
+    });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 });

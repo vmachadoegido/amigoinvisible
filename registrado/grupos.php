@@ -7,6 +7,10 @@
     // Crear el objeto de operaciones.
     $objeto=new operaciones();
 
+    require("../assets/operaciones/procesosapp.php");
+    $objetoprocesosapp = new precososapp();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -306,6 +310,38 @@
                                             });
                                         </script>';
                                     }
+                                    else
+                                    {
+                                        
+                                        if($_GET["opcion"]=='ver' and isset($_GET["id"]))
+                                        {
+                                            
+                                            $idgrupo = $_GET["id"];
+                                            $consulta="
+                                                SELECT regalo.Ruta, regalo.Nombre
+                                                FROM usuarios
+                                                INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
+                                                WHERE usuarios.Correo = '".$_SESSION["correo"]."' AND regalo.Grupo = $idgrupo;
+                                            ";
+                                            //echo $consulta2.'</br>';
+                                            $objeto->realizarConsultas($consulta);
+
+
+                                            if($objeto->comprobarFila()>0)
+                                            {
+                                                $fila = $objeto->extraerFilas();
+                                                //echo '<a href="/amigoinvisible/regalos/'.$idgrupo.'/'.$_SESSION["correo"].'/'.$fila["Nombre"].'" target="_blank" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
+                                                header('Location: amigoinvisible/regalos/'.$idgrupo.'/'.$_SESSION["correo"].'/'.$fila["Nombre"].' ');
+                                            }
+                                            else
+                                           {
+                                                echo '<td>Sin Regalo</td>';
+                                            }
+                                        }
+                                        
+
+                                        
+                                    }
                                 }
                             }
                         }
@@ -418,6 +454,7 @@
                                 // Si no devuelve filas no hara nada.
                                 if($objeto->comprobarFila()>0)
                                 {
+
                                     // Extraer filas - Bucle para todos los grupos que participa.
                                     // Extrae las filas de la consulta y lo va mostrando en diferentes tarjetas.
                                     while($fila = $objeto->extraerFilas())
@@ -432,6 +469,36 @@
                                                     echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
                                                         echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
                                                             echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=subir" type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</a>';
+
+                                                            $idgrupover = $fila["IDGrupo"];
+                                                            $usuario = $_SESSION["correo"];
+                                        
+
+                                                            //$objetoprocesosapp->verregalo($idgrupover, $usuario);
+                                        
+                                        
+//                                                            $consulta2="
+//                                                                SELECT regalo.Ruta, regalo.Nombre
+//                                                                FROM usuarios
+//                                                                INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
+//                                                                WHERE usuarios.Correo = '".$_SESSION["correo"]."' AND regalo.Grupo = $idgrupover;
+//                                                            ";
+//                                                            echo $consulta2.'</br>';
+//                                                            $objeto->realizarConsultas($consulta2);
+//
+//
+//                                                            if($objeto->comprobarFila()>0)
+//                                                            {
+//                                                                $fila2 = $objeto->extraerFilas();
+//                                                                echo '<a href="/amigoinvisible/regalos/'.$idgrupover.'/'.$_SESSION["correo"].'/'.$fila2["Nombre"].'" target="_blank" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
+//
+//                                                            }
+//                                                            else
+//                                                            {
+//                                                                echo '<td>Sin Regalo</td>';
+//                                                            }
+
+
                                                             echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ver" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
                                                         echo '</div>';
                                                     echo '</div>';
@@ -439,6 +506,11 @@
                                             echo '</div>';
                                         echo '</div>';
                                     }
+                                    
+                                    
+                                    
+                                    
+                                    
                                 }
                             }
                         }
@@ -636,10 +708,10 @@
                             if(isset($_FILES['archivo']))
                             {
                                 // Traer las operaciones de ftp
-                                require("../assets/operaciones/operaciones_ftp.php");
-                                $objetoftp = new operaciones_ftp();
+                                //require("../assets/operaciones/procesosapp.php");
+                                //$objetoprocesosapp = new precososapp();
 
-                                // Guardar en variables los datos que se enviaran.
+                                // Guardar en variables los datos que se enviaron.
                                 $nombretemp = $_FILES['archivo']['tmp_name'];
                                 $nombreregalo = $_FILES['archivo']['name'];
                                 $formato = $_FILES['archivo']['type'];
@@ -648,115 +720,113 @@
                                 $correousuario = $_SESSION["correo"];
                                 $fechahoy = date('Y-m-d');
 
-                                // Consulta la cual devuelve filas si ese usuario ya subio algun regalo.
-                                $consulta = "
-                                    SELECT usuarios.Correo, usuarios.IDUsuario, regalo.IDRegalo, regalo.Grupo, regalo.Nombre
-                                    FROM usuarios, regalo
-                                    WHERE usuarios.Correo = '".$correousuario."' AND regalo.Grupo = $grupoid;
-                                ";
-
-                                //echo $consulta;
-                                $objeto->realizarConsultas($consulta);
-
-                                // Si devuelve filas, significa que ese usuario ya subio algun correo.
-                                if($objeto->comprobarFila()>0)
+                                // Si el formato es desconocido
+                                if($formato == 'application/octet-stream' OR $formato == 'application/octet-stream')
                                 {
-                                    // Se extrae las filas.
-                                    $fila = $objeto->extraerFilas();
+                                    echo '<script> errortipoarchivo(); </script>';
+                                }
+                                else
+                                {
+                                    // Consulta la cual devuelve filas si ese usuario ya subio algun regalo.
+                                    $consulta = "
+                                        SELECT usuarios.Correo, usuarios.IDUsuario, regalo.IDRegalo, regalo.Grupo, regalo.Nombre
+                                        FROM usuarios, regalo
+                                        WHERE usuarios.Correo = '".$correousuario."' AND regalo.Grupo = $grupoid;
+                                    ";
 
-                                    // Se guarda en una variable el nombre del regalo anterior.
-                                    $nombreregaloanitguo = $fila["Nombre"];
-                                    $idusaruio = $fila["IDUsuario"];
+                                    //echo $consulta;
+                                    $objeto->realizarConsultas($consulta);
 
-                                    // Subo el nuevo regalo al server.
-                                    // Actualizo la BD.
-                                        // Guardo el nombre del regalo.
-                                        // Elimino el antiguo regalo.
-
-                                    // Sirve para subir archivos.
-                                    if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                    // Si devuelve filas, significa que ese usuario ya subio algun correo.
+                                    if($objeto->comprobarFila()>0)
                                     {
-                                        //Sirve para eliminar archivos
-                                        if($objetoftp->eliminararchivo($grupoid, $correousuario, $nombreregaloanitguo) == "Si")
+                                        // Se extrae las filas.
+                                        $fila = $objeto->extraerFilas();
+
+                                        // Se guarda en una variable el nombre del regalo anterior.
+                                        $nombreregaloanitguo = $fila["Nombre"];
+                                        $idusaruio = $fila["IDUsuario"];
+
+                                        // Funcion, se le envia los datos y si retorna un Si entra. Significa que se subio el archivo.
+                                        if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
                                         {
-                                            // Consulta. Actualizar los datos de la BD con el nuevo regalo.
-                                            $consulta = "
-                                                UPDATE regalo
-                                                SET
-                                                Nombre = '$nombreregalo',
-                                                Volumen = $volumen,
-                                                Formato = '$formato',
-                                                Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
-                                                Fecha_Subida = '$fechahoy',
-                                                Grupo = $grupoid,
-                                                Usuario = $idusaruio
-                                                WHERE Grupo = $grupoid AND Usuario = $idusaruio;
-                                            ";
-
-                                            //cho $consulta;
-                                            $objeto->realizarConsultas($consulta);
-
-                                            // Si deuvelve filas significa que se actualizo los datos.
-                                            if($objeto->comprobar()>0)
+                                            // Funcion que elimina el archivo antiguo. Si retorna Si entra. Signficia que se elimino.
+                                            if($objetoprocesosapp->eliminararchivo($grupoid, $correousuario, $nombreregaloanitguo) == "Si")
                                             {
-                                                echo '<script> correctosubido(); </script>';
+                                                // Consulta. Actualizar los datos de la BD con el nuevo regalo.
+                                                $consulta = "
+                                                    UPDATE regalo
+                                                    SET
+                                                    Nombre = '$nombreregalo',
+                                                    Volumen = $volumen,
+                                                    Formato = '$formato',
+                                                    Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
+                                                    Fecha_Subida = '$fechahoy',
+                                                    Grupo = $grupoid,
+                                                    Usuario = $idusaruio
+                                                    WHERE Grupo = $grupoid AND Usuario = $idusaruio;
+                                                ";
+
+                                                //cho $consulta;
+                                                $objeto->realizarConsultas($consulta);
+
+                                                // Si deuvelve filas significa que se actualizo los datos.
+                                                if($objeto->comprobar()>0)
+                                                {
+                                                    echo '<script> correctosubido(); </script>';
+                                                }
+                                                else
+                                                {
+                                                    echo '<script> error(); </script>';
+                                                }
                                             }
-                                            else
+                                            else // Fallo al actualizar los datos.
                                             {
                                                 echo '<script> error(); </script>';
                                             }
                                         }
-                                        else
+                                        else // Si fallo la subida del archivo.
                                         {
                                             echo '<script> error(); </script>';
                                         }
                                     }
-                                    else // Si fallo la subida del archivo.
+                                    else // Si entra aqui significa que es la primera subida de regalo.
                                     {
-                                        echo '<script> error(); </script>';
-                                    }
-                                }
-                                else // Si entra aqui significa que es la primera subida de regalo.
-                                {
-                                    // Consulta para sacar la ID del usuario.
-                                    $consulta = "
-                                        SELECT IDUsuario, Correo
-                                        FROM usuarios
-                                        WHERE Correo = '$correousuario';
-                                    ";
-                                    //echo $consulta;
-                                    $objeto->realizarConsultas($consulta);
+                                        // Consulta para sacar la ID del usuario.
+                                        $consulta = "
+                                            SELECT IDUsuario, Correo
+                                            FROM usuarios
+                                            WHERE Correo = '$correousuario';
+                                        ";
+                                        //echo $consulta;
+                                        $objeto->realizarConsultas($consulta);
 
-                                    // Si devuelve filas significa que existe ese usuario.
-                                    if($objeto->comprobarFila()>0)
-                                    {
-                                        // Extraigo las filas de la consulta
-                                        $fila = $objeto->extraerFilas();
-
-                                        // Guardo en una variable la id del usuario.
-                                        $idusaruio = $fila["IDUsuario"];
-
-
-                                        // Subimos el regalo en el servidor, en la carpeta del grupo y su correo.
-                                        if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                        // Si devuelve filas significa que existe ese usuario.
+                                        if($objeto->comprobarFila()>0)
                                         {
-                                            //echo '<script> correctosubido(); </script>';
+                                            // Extraigo las filas de la consulta
+                                            $fila = $objeto->extraerFilas();
 
-                                            // Consulta. Inserta los datos en la tabla regalo con los datos recibido del formulario de subida de regalo.
-                                            $consulta = "
-                                                INSERT INTO regalo (Volumen, Nombre, Formato, Ruta, Fecha_Subida, Grupo, Usuario)
-                                                VALUES ($volumen, '$nombreregalo', '$formato', 'amigoinvisible/regalos/$grupoid/$correousuario', '$fechahoy', $grupoid, $idusaruio);
+                                            // Guardo en una variable la id del usuario.
+                                            $idusuario = $fila["IDUsuario"];
 
-                                            ";
-                                            $objeto->realizarConsultas($consulta);
-                                            //echo $consulta;
 
-                                            // Si devuelve filas, significa que se agrego en la bd los datos.
-                                            if($objeto->comprobar()>0)
+                                            // Subimos el regalo en el servidor, en la carpeta del grupo y su correo.
+                                            if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
                                             {
+                                                //echo '<script> correctosubido(); </script>';
 
-                                                // Sirve para subir archivos.
-                                                if($objetoftp->subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
+                                                // Consulta. Inserta los datos en la tabla regalo con los datos recibido del formulario de subida de regalo.
+                                                $consulta = "
+                                                    INSERT INTO regalo (Volumen, Nombre, Formato, Ruta, Fecha_Subida, Grupo, Usuario)
+                                                    VALUES ($volumen, '$nombreregalo', '$formato', 'amigoinvisible/regalos/$grupoid/$correousuario', '$fechahoy', $grupoid, $idusuario);
+
+                                                ";
+                                                $objeto->realizarConsultas($consulta);
+                                                //echo $consulta;
+
+                                                // Si devuelve filas, significa que se agrego en la bd los datos.
+                                                if($objeto->comprobar()>0)
                                                 {
                                                     echo '<script> correctosubido(); </script>';
                                                 }
@@ -774,10 +844,6 @@
                                         {
                                             echo '<script> error(); </script>';
                                         }
-                                    }
-                                    else
-                                    {
-                                        echo '<script> error(); </script>';
                                     }
                                 }
                             }
@@ -825,7 +891,6 @@
                                     $array[] = $fila["Correo"];
                                 }
 
-
                                 // Visualizar la array, con la lista de usuarios del grupo.
                                 /*
                                 foreach($array as $valores)
@@ -838,88 +903,121 @@
                                 $contador = count($array);
                                 //echo $contador;
 
-                                // Crear una array, la cual ire agregando numeros hasta llegar a $contador.
-                                for ($i = 1; $i <= $contador; $i++)
+                                // Si contador es impar salta mensaje.
+                                if($contador% 2 != 0 )
                                 {
-                                    // Va guardando el contador en la array.
-                                    $arraycontador[] = $i;
+                                    echo '<script> errorimparpareja(); </script>';
                                 }
-
-                                // Visualizar la array contador.
-                                /*
-                                foreach($arraycontador as $valor)
+                                else // Son numeros par la gente.
                                 {
-                                    echo $valor.' ';
-                                }
-                                */
-
-                                $i = 1;
-                                foreach($array as $valor)
-                                {
-
-                                    $random=array_rand($arraycontador,1);
-
-                                    while($valor == $array[$random])
+                                    //$contador2 = $contador-1;
+                                    // Crear una array, la cual ire agregando numeros hasta llegar a $contador.
+                                    for ($i = 1; $i <= $contador; $i++)
                                     {
-                                        $random=array_rand($arraycontador,1);
+                                        // Va guardando el contador en la array.
+                                        $arraycontador[] = $i;
                                     }
 
+                                    // Visualizar la array contador.
+                                    /*
+                                    foreach($arraycontador as $valor)
+                                    {
+                                        echo $valor.' ';
+                                    }
+                                    */
 
-                                    echo '<table class="table ">';
-                                      echo '<thead>';
-                                        echo '<tr>';
-                                          echo '<th scope="col">Parejas</th>';
-                                          echo '<th scope="col">Primero</th>';
-                                          echo '<th scope="col">Segundo</th>';
-                                          echo '<th scope="col">Regalo</th>';
-                                        echo '</tr>';
-                                      echo '</thead>';
-                                      echo '<tbody>';
-                                        echo '<tr>';
-                                          echo '<th>'.$i.'</th>';
-                                          echo '<td colspan="2">'.$valor.'</td>';
-                                          echo '<td colspan="2">'.$array[$random].'</td>';
-                                          echo '<td><a href="">Regalo</a></td>';
-                                        echo '</tr>';
-                                    echo '</table>';
+                                    // Variable contador.
+                                    $i = 1;
 
-                                    //echo $valor.'/'.$array[$random].'<br/>';
+                                    echo '<table class="table">';
+                                        echo '<thead>';
+                                            echo '<tr>';
+                                                echo '<th>Parejas</th>';
+                                                echo '<th>Quien Regala</th>';
+                                                echo '<th>Destinatario</th>';
+                                                echo '<th>Regalo</th>';
+                                            echo '</tr>';
+                                        echo '</thead>';
+									// Recorro la array, $valor son los correos.
+									foreach($array as $valor)
+									{
+										$random=array_rand($arraycontador,1);
 
-                                    unset($arraycontador[$random]);
+										//echo $valor.'|'.$array[$random].'<br>';
+									
+										// Si el $valor(Quien Regala) es igual a $array[$random](Destinatario random) entra en el if
+										if($valor == $array[$random])
+										{
+											// Se vuelve a barajar
+											$random=array_rand($arraycontador,1);
+											
+											// Si vuelve a ser igual entra en el if, y reinicia la pagina.
+											if($valor == $array[$random])
+											{
+												// Script para redirigir a la pagina de emparejar ese grupo.
+												echo '<script> 
+													window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php?id='?>
+														<?php echo $_GET["id"] ?><?php echo '&opcion=emp";
+												</script>';
+											}
+											
+										}
+										
+										echo '<tbody>';
+										echo '<tr>';
+										  echo '<th>'.$i.'</th>';
+										  echo '<td>'.$valor.'</td>';
+										  echo '<td >'.$array[$random].'</td>';
+										
+											// Guardo la id del grupo en una variable.
+											$idgrupo = $_GET["id"];
+										
+											// Consula. Para saber si tiene regalo la persona que regala.
+											$consulta = "
+												SELECT regalo.Ruta, regalo.Nombre
+												FROM usuarios
+												INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
+												WHERE usuarios.Correo = '".$valor."' AND regalo.Grupo = $idgrupo;
+											";
 
-                                    $i++;
+											//echo $consulta;
+											$objeto->realizarConsultas($consulta);
+										
+											// Si devuelve filas significa que esa persona tiene regalo.
+											if($objeto->comprobarFila()>0)
+											{
+												$fila = $objeto->extraerFilas();
+												echo '<td><a href="/amigoinvisible/regalos/'.$_GET["id"].'/'.$valor.'/'.$fila["Nombre"].'" target="_blank">Regalo</a></td>';
+											}
+											else // SI entra aqui, significa que esa persona no subio regalo.
+											{
+												echo '<td>Vacio</td>';
+											}
+											
+										
+										echo '</tr>';
 
+										// Borra los numeros del contador, y asi no se repiten los correos.
+										unset($arraycontador[$random]);
 
-                                }
+										// Va aumentando la $i
+										$i++;
+										
+										// Crear array destinatario.
+										$array[] = $fila["Correo"];
+										
+										
+									}
+
+                                    
+
+								}
+                                
+                                echo '</table>';
 
                                 echo '<button class="btn btn-warning" type="button" data-dismiss="modal">Repartir</button>';
 
                             }
-
-//                                $array = array('User1', 'User2', 'User3', 'User4', 'User5', 'User6', 'User7');
-//
-//                                $contador = count($array);
-//
-//                                for ($i = 1; $i <= $contador; $i++)
-//                                {
-//                                    $arraycontador[] = $i;
-//                                }
-//
-//                                foreach($arraycontador as $valor)
-//                                {
-//                                    echo $valor.' ';
-//                                }
-//
-//                                echo '<br>';
-//
-//                                foreach($array as $valor)
-//                                {
-//                                    $random=array_rand($arraycontador,1);
-//
-//                                    echo $valor.'/'.$array[$random].'<br/>';
-//
-//                                    unset($arraycontador[$random]);
-//                                }
 
 
                         ?>
@@ -974,3 +1072,23 @@
         </footer>
     </body>
 </html>
+
+
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									
+									

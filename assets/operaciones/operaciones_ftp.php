@@ -6,86 +6,104 @@
     class operaciones_ftp
     {
 
-        public $conn_id;
-
-        // Se crea el constructuro de conexion
-        function __construct()
-        {
-            // Se conecta con el servidor.
-            $this->conn_id = @ftp_connect(servidor);
-
-            // Si se establece la conexion se iniciara session
-            if($this->conn_id)
-            {
-                // Se inicia sesion con els ervidor.
-                if(@ftp_login($this->conn_id,user_host,password))
-                {
-                    echo "<script>console.log('Inicio sesion correcto con el servidor');</script>";
-                }
-                else
-                    echo "<script>console.log('Error: No se pudo iniciar sesion con el servidor.');</script>";
-
-            }
-            else // Si no se conecta con el servidor lo informara por console.log
-            {
-                echo "<script>console.log('Error: No se pudo conectar con el Servidor.');</script>";
-            }
-        }
-
-
-        function conectar()
-        {
-
-
-
-        }
-
-
         /**
         * Crear una carpeta, en el grupo con esa persona.
         * @return Null
         * @param String $grupoid, String $usuarioregalo.
         */
-        function crearcarpeta($grupoid, $usuarioregalo)
+//        function crearcarpeta($grupoid, $usuarioregalo)
+//        {
+//
+//            // Se introduce las variables obtenidas en la ruta.
+//            $ruta = '/amigoinvisible/regalos/'.$grupoid.'/'.$usuarioregalo.'';
+//            //echo $ruta.'<br>';
+//
+//            // Se guarda en una variable, cada trozo de la ruta quitando el "/"
+//            $partes = explode("/",$ruta);
+//            $fullpath = "";
+//            // Se crea un bucle para ir creando las subcarpetas.
+//            foreach($partes as $parte)
+//            {
+//                // Si la parte esta vacia cantinua con la siguiente "partes"
+//                if(empty($parte))
+//                {
+//                    $fullpath .= "/";
+//                    continue;
+//                }
+//                // Se pone la siguiente parte en $fullpath, y asi va avanzando
+//                $fullpath .= $parte."/"; // '/amigoinvisible/regalos'
+//
+//                // Se crea la carpeta con la ruta dada en $fullpath
+//                if(@ftp_chdir($this->conn_id, $fullpath)) // '/amigoinvisible/regalos'
+//                {
+//                   ftp_chdir($this->conn_id, $fullpath);
+//                }
+//                else // Si esta creada pasa a la siguiente parte
+//                {
+//                    // Se crea la carpeta con el nombre de la parte.
+//                    if(@ftp_mkdir($this->conn_id, $parte)) // En bucle las partes hasta completar la ruta entera '/amigoinvisible/regalos/'.$grupoid.'/'.$usuarioregalo.'';
+//                    {
+//                        ftp_chdir($this->conn_id, $parte);
+//                    }
+//                }
+//            }
+//
+//            // Cierra la conexion con el ftp.
+//            ftp_close($this->conn_id);
+//        }
+
+
+        function subirarchivo($grupoid, $usuarioregalo)
         {
 
-            // Se introduce las variables obtenidas en la ruta.
-            $ruta = '/amigoinvisible/regalos/'.$grupoid.'/'.$usuarioregalo.'';
-            //echo $ruta.'<br>';
-
-            // Se guarda en una variable, cada trozo de la ruta quitando el "/"
-            $partes = explode("/",$ruta);
-            $fullpath = "";
-            // Se crea un bucle para ir creando las subcarpetas.
-            foreach($partes as $parte)
+            // Si no exite la carpeta
+            if(!file_exists('../regalos/'.$grupoid.'/'))
             {
-                // Si la parte esta vacia cantinua con la siguiente "partes"
-                if(empty($parte))
-                {
-                    $fullpath .= "/";
-                    continue;
-                }
-                // Se pone la siguiente parte en $fullpath, y asi va avanzando
-                $fullpath .= $parte."/"; // '/amigoinvisible/regalos'
+                // Crea la carpeta
+                mkdir('../regalos/'.$grupoid.'/',0777,true);
+                mkdir('../regalos/'.$grupoid.'/'.$correousuario.'/',0777,true);
 
-                // Se crea la carpeta con la ruta dada en $fullpath
-                if(@ftp_chdir($this->conn_id, $fullpath)) // '/amigoinvisible/regalos'
+                // Si existe esa ruta
+                if(file_exists('../regalos/'.$grupoid.'/'.$correousuario.'/'))
                 {
-                   ftp_chdir($this->conn_id, $fullpath);
-                }
-                else // Si esta creada pasa a la siguiente parte
-                {
-                    // Se crea la carpeta con el nombre de la parte.
-                    if(@ftp_mkdir($this->conn_id, $parte)) // En bucle las partes hasta completar la ruta entera '/amigoinvisible/regalos/'.$grupoid.'/'.$usuarioregalo.'';
+                    // Sube el archivo
+                    if(move_uploaded_file($nombretemp, '../regalos/'.$grupoid.'/'.$correousuario.'/'.$nombreregalo))
                     {
-                        ftp_chdir($this->conn_id, $parte);
+                        echo "Archivo guardado con exito";
+                    }
+                    else
+                    {
+                        echo "Archivo no se pudo guardar";
                     }
                 }
             }
+            else // Si existe la carpeta lo sube directamente.
+            {
+                // Sube al archivo
+                if(move_uploaded_file($nombretemp, '../regalos/'.$grupoid.'/'.$correousuario.'/'.$nombreregalo))
+                {
+                    echo "Archivo guardado con exito";
+                }
+                else
+                {
+                    echo "Archivo no se pudo guardar";
+                }
+            }
 
-            // Cierra la conexion con el ftp.
-            ftp_close($this->conn_id);
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
         /**
         * Elminar directorio.
@@ -124,7 +142,7 @@
         * @return Si, No.
         * @param Int $grupoid, String $correousuario, String $nombretemp, String $nombreregalo
         */
-        function subirarchivos($grupoid, $correousuario, $nombretemp, $nombreregalo)
+        function subirarchivos2($grupoid, $correousuario, $nombretemp, $nombreregalo)
         {
 
             $destination_file = 'amigoinvisible/regalos/'.$grupoid.'/'.$correousuario.'/';
