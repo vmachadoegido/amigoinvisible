@@ -59,6 +59,10 @@
                 $objeto->realizarConsultas($consulta);
                 if($objeto->comprobar()>0)
                 {
+					$grupoid = $objeto->ultimoid();
+					
+					mkdir('../regalos/'.$grupoid.'/',0777,true);
+
                     echo 'Si';
                 }
                 else

@@ -25,50 +25,55 @@
             // Por lo tanto no lo guarda y lo ignora.
             if($objeto->comprobar()>0)
             {
-                echo 'Ese correo ya esta invitado.';
+                echo 'Duplicado';
             }
             else // Si no devuelve filas, significa que ese correo no fue invitado a ese grupo y lo introduce.
             {
-                // Consulta. Inserta el correo invitado al grupo que se le invitado.
-                $consulta = "INSERT INTO invitado (IDGrupo, Correo) VALUES ('".$grupoid."', '".$valor."');";
-                $objeto->realizarConsultas($consulta);
+				
+				if(!empty($valor))
+				{
+					// Consulta. Inserta el correo invitado al grupo que se le invitado.
+					$consulta = "INSERT INTO invitado (IDGrupo, Correo) VALUES ('".$grupoid."', '".$valor."');";
+					$objeto->realizarConsultas($consulta);
 
-                // Comprueba si devuelve filas. Si lo hace significa que fue agregado a la tabla y se le envia un correo.
-                if($objeto->comprobar()>0)
-                {
-                    // Se envia el correo al invitiado.
-                    $subject = "Amigo Invisible";
-                    $headers = "MIME-Version: 1.0" . "\r\n";
-                    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+					// Comprueba si devuelve filas. Si lo hace significa que fue agregado a la tabla y se le envia un correo.
+					if($objeto->comprobar()>0)
+					{
+						// Se envia el correo al invitiado.
+						$subject = "Amigo Invisible";
+						$headers = "MIME-Version: 1.0" . "\r\n";
+						$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
-                    $message = '
-                        <html lang="es">
-                            <head>
-                                <title>Amigo Invisible</title>
-                            </head>
-                            <body>
-                                <h1>Amigo Invisible</h1>
-                                <p>
-                                    Hola, has sido invitado a un grupo de amigo invisible.<br/>
-                                    Inicia sesion en https://22.2daw.esvirgua.com/amigoinvisible.
-                                </p>
-                            </body>
-                        </html>
-                    ';
+						$message = '
+							<html lang="es">
+								<head>
+									<title>Amigo Invisible</title>
+								</head>
+								<body>
+									<h1>Amigo Invisible</h1>
+									<p>
+										Hola, has sido invitado a un grupo de amigo invisible.<br/>
+										Inicia sesion en https://22.2daw.esvirgua.com/amigoinvisible.
+									</p>
+								</body>
+							</html>
+						';
 
-                    mail($valor, $subject, $message, $headers);
+						mail($valor, $subject, $message, $headers);
+					}
 
-                    echo 'Enviado Correo';
+					echo 'Si';
+				}
+				else
+				{
+					echo '<script> error(); </script>';
                 }
-                else
-                {
-                    echo '<script> error(); </script>';
-                }
+				
             }
         }
         else
         {
-            echo 'El correo de la session y el del invitado son iguales.';
+            echo 'Mismo';
         }
     }
 

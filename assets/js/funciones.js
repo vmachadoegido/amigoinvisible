@@ -9,7 +9,8 @@ function nologeado()
       text: 'No estas iniciado sesion!',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Iniciar Sesion'
+      confirmButtonText: 'Iniciar Sesion',
+	  allowOutsideClick: false
     }).then((result) => {
       if (result.isConfirmed)
       {

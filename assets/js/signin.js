@@ -77,7 +77,8 @@ function auth(action, profile = null)
                       icon: 'success',
                       title: 'Correcto',
                       text: 'Bienvenido :D',
-                      showConfirmButton: false,  
+                      showConfirmButton: false,
+					  allowOutsideClick: false,
                       timer: 2000
                     }).then((result) => {
                       if (result.dismiss === Swal.DismissReason.timer) {
@@ -96,6 +97,7 @@ function auth(action, profile = null)
                       icon: 'error',
                       title: 'Oops..',
                       text: 'Parece que ese correo no pertenece a este dominio',
+					  allowOutsideClick: false,
                       showConfirmButton: false,
                       timer: 2000
                     })

@@ -64,27 +64,7 @@
             // Creo la variable de la fecha
             $fechahoy = date('Y-m-d');
         ?>
-
-        <!-- Comprobar mensaje de error -->
-        <?php
-
-            if(isset($_SESSION["mensaje"]))
-            {
-                // Mensaje si se elimino el grupo
-                if($_SESSION["mensaje"] == "CorrectoE")
-                {
-                    echo '<script> correctoeliminado(); </script>';
-                    unset($_SESSION["mensaje"]);
-                }
-                // Mensaje de error.
-                if($_SESSION["mensaje"] == "Error")
-                {
-                    echo '<script> error(); </script>';
-                    unset($_SESSION["mensaje"]);
-                }
-            }
-        ?>
-
+		
          <!-- Revisa si esta invitado algun grupo y lo registra -->
         <?php
             // Guardo la variable de la sesion del correo.
@@ -181,114 +161,117 @@
                 // Ejecuta la ventana modal de editar grupo. Lo hace visible.
                 if($_GET["opcion"]=='ed')
                 {
-                    echo '<script>
+					if($_SESSION["rol"] == "p")
+					{
+						echo '<script>
                             $(document).ready(function(){
                               $("#ventanaeditargrupo").modal();
                             });
                         </script>';
+					}
+					else
+					{
+						echo '<script> error(); </script>';
+					}
                 }
-                else
+				else
                 {
                     // Opcion para invitado
                     if($_GET["opcion"]=='in')
                     {
-                        echo '<script>
-                            $(document).ready(function(){
-                              $("#ventanainvitargrupo").modal();
-                            });
-                        </script>';
+						if($_SESSION["rol"] == "p")
+						{
+							echo '<script>
+                            	$(document).ready(function(){
+							$("#ventanainvitargrupo").modal();
+                            	});
+                        	</script>';
+						}
+						else
+						{
+							echo '<script> error(); </script>';
+						}
                     }
                     else
                     {
                         // Opcion para expulsar
                         if($_GET["opcion"]=='ex' and isset($_GET["correo"]) and isset($_GET["id"]))
                         {
-                            // Consulta. Comprueba si existe en la invitacion con ese grupo
-                            $consulta ="
-                                SELECT *
-                                FROM invitado
-                                WHERE Correo = '".$_GET["correo"]."' AND IDGrupo = '".$_GET["id"]."';
-                            ";
-                            //print($consulta);
-                            $objeto->realizarConsultas($consulta);
-
-                            // Si devuelve fila significa que esta en la tabla invitado.
-                            if($objeto->comprobarFila()>0)
-                            {
-
-                                // Consulta. Eliminar la invitacion de esa persona.
-                                $consulta = "DELETE FROM invitado WHERE invitado.Correo = '".$_GET["correo"]."';";
-                                //print($consulta);
-                                $objeto->realizarConsultas($consulta);
-
-                                // Si devuelve fila significa que fue eliminado corectamente.
-                                if($objeto->comprobar()>0)
-                                {
-                                    echo '<script> console.log("Fue eliminado la invitacion."); </script>';
-
-                                    // Consulta. Comprueba que ese usuario pertenece a ese grupo.
-                                    $consulta ="
-                                        SELECT usuarios.IDUsuario, usuarios.Correo, usuariogrupo.IDUsuario, usuariogrupo.IDGrupo
-                                        FROM usuarios
-                                        INNER JOIN usuariogrupo ON usuariogrupo.IDUsuario = usuarios.IDUsuario
-                                        WHERE usuarios.Correo = '".$_GET["correo"]."' AND usuariogrupo.IDGrupo = '".$_GET["id"]."';
-                                    ";
-                                    //print($consulta);
-                                    $objeto->realizarConsultas($consulta);
-
-                                    // Si devuelve fila significa que ese correo pertenecia a un grupo.
-                                    if($objeto->comprobarFila()>0)
-                                    {
-                                        // Consulta. Elimina al usuario del grupo.
-                                        $consulta = "DELETE FROM usuariogrupo WHERE usuariogrupo.IDGrupo = '".$_GET["id"]."'";
-                                        $objeto->realizarConsultas($consulta);
-
-                                        // Si devuelve filas significa que fue borraro corectamente.
-                                        if($objeto->comprobar()>0)
-                                        {
-                                            echo '<script> console.log("Fue eliminado del grupo."); </script>';
-                                            echo '<script> correctoexpulsado(); </script>';
-                                            echo "<script>
-
-                                                Swal.fire({
-                                                  icon: 'success',
-                                                  title: 'Correcto',
-                                                  text: 'Expulsado Correctamente',
-                                                  confirmButtonColor: '#3085d6',
-                                                  cancelButtonColor: '#d33',
-                                                  confirmButtonText: 'Actualizar'
-                                                }).then((result) => {
-                                                  if (result.isConfirmed)
-                                                  {
-                                                        window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
-                                                  }
-                                                  else
-                                                  {
-                                                        window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
-                                                  }
-                                                })
-
-                                            </script>";
-                                        }
-
-                                    }
-                                    else // Si no devuelve filas, significa que ese usuario no se registro en la web.
-                                    {
-                                        echo '<script> correctoexpulsado(); </script>';
-                                    }
-
-                                }
-                            }
+							// Alerta para que se confirma la expulsion de alguien del grupo
+							echo "<script>
+							Swal.fire({
+							  title: '¿Estas seguro de expulsar a "?><?php echo $_GET["correo"] ?><?php echo "?',
+							  showDenyButton: true,
+							  showCancelButton: false,
+							  confirmButtonText: 'Si',
+							  denyButtonText: 'No expulsar',
+							  allowOutsideClick: false,
+							}).then((result) => {
+							  if (result.isConfirmed) // Si le da al boton confirmar, elimina el usuario.
+							  {
+							  		// Guardo las variables del correo (expulsar) y la id del grupo
+									var correexpulsado= '"?><?php echo $_GET["correo"] ?><?php echo "';
+									var laidgrupo= '"?><?php echo $_GET["id"] ?><?php echo "';
+ 
+									// Enviamos la variable de javascript a archivo.php
+									$.post('expulsar.php',{'correexpulsado':correexpulsado, 'laidgrupo':laidgrupo},function(respuesta)
+									{
+										//alert(respuesta);
+										
+										// Si se recibe un Si, significa que fue eliminado todo.
+										if(respuesta == 'Si')
+										{
+											Swal.fire({
+											  icon: 'success',
+											  title: 'Correcto',
+											  text: 'Expulsado Correctamente',
+											  confirmButtonColor: '#3085d6',
+											  cancelButtonColor: '#d33',
+											  confirmButtonText: 'Actualizar',
+											  allowOutsideClick: false
+											}).then((result) => {
+											  if (result.isConfirmed)
+											  {
+													window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+											  }
+											  else
+											  {
+													window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+											  }
+											})
+										}
+									});
+							
+							
+								
+							  } 
+							  else 
+							  	if (result.isDenied) // Si le da al boton cancelar, cancela la eliminacion.
+								{
+									// Lo redireciona a la pagina principal.
+									window.location.href = 'http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+							  	}
+							})
+							
+							</script>";
                         }
                         else
                         {
                             if($_GET["opcion"]=='ex')
                             {
-                                echo '<script>
-                                    $(document).ready(function(){
-                                      $("#ventanaexpulsarinvitargrupo").modal();
-                                    });
-                                </script>';
+								if($_SESSION["rol"] == "p")
+								{
+									echo '<script>
+										$(document).ready(function(){
+										  $("#ventanaexpulsarinvitargrupo").modal();
+										});
+                                	</script>';
+								}
+								else
+								{
+									echo '<script> error(); </script>';
+								}
+                                
                             }
                             else
                             {
@@ -304,44 +287,90 @@
                                 {
                                     if($_GET["opcion"]=='emp')
                                     {
-                                        echo '<script>
-                                            $(document).ready(function(){
-                                              $("#ventanaemparejar").modal();
-                                            });
-                                        </script>';
+										if($_SESSION["rol"] == "p")
+										{
+											echo '<script>
+												$(document).ready(function(){
+												  $("#ventanaemparejar").modal();
+												});
+                                        	</script>';
+										}
+										else
+										{
+											echo '<script> error(); </script>';
+										}
                                     }
-                                    else
-                                    {
-                                        
-                                        if($_GET["opcion"]=='ver' and isset($_GET["id"]))
-                                        {
-                                            
-                                            $idgrupo = $_GET["id"];
-                                            $consulta="
-                                                SELECT regalo.Ruta, regalo.Nombre
-                                                FROM usuarios
-                                                INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
-                                                WHERE usuarios.Correo = '".$_SESSION["correo"]."' AND regalo.Grupo = $idgrupo;
-                                            ";
-                                            //echo $consulta2.'</br>';
-                                            $objeto->realizarConsultas($consulta);
+									else
+									{
+										if($_GET["opcion"]=='delgrup')
+										{
+											
+											if($_SESSION["rol"] == "p")
+											{
+												// Alerta para que se confirma la expulsion de alguien del grupo
+												echo "<script>
+												Swal.fire({
+												  title: '¿Estas seguro de eliminar el grupo?',
+												  showDenyButton: true,
+												  showCancelButton: false,
+												  confirmButtonText: 'Si',
+												  denyButtonText: 'No eliminar',
+												  allowOutsideClick: false,
+												}).then((result) => {
+												  if (result.isConfirmed) // Si le da al boton confirmar, elimina el usuario.
+												  {
+														// Guardo las variables del correo (expulsar) y la id del grupo
+														var correepropietario= '"?><?php echo $_SESSION["correo"] ?><?php echo "';
+														var laidgrupo= '"?><?php echo $_GET["id"] ?><?php echo "';
+
+														// Enviamos la variable de javascript a archivo.php
+														$.post('eliminargrupo.php',{'correepropietario':correepropietario, 'laidgrupo':laidgrupo},function(respuesta)
+														{
+															alert(respuesta);
+
+															// Si se recibe un Si, significa que fue eliminado todo.
+															if(respuesta == 'Si')
+															{
+																Swal.fire({
+																  icon: 'success',
+																  title: 'Correcto',
+																  text: 'Grupo Eliminado Correctamente',
+																  confirmButtonColor: '#3085d6',
+																  cancelButtonColor: '#d33',
+																  confirmButtonText: 'Actualizar',
+																  allowOutsideClick: false
+																}).then((result) => {
+																  if (result.isConfirmed)
+																  {
+																		window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+																  }
+																  else
+																  {
+																		window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+																  }
+																})
+															}
+														});
 
 
-                                            if($objeto->comprobarFila()>0)
-                                            {
-                                                $fila = $objeto->extraerFilas();
-                                                //echo '<a href="/amigoinvisible/regalos/'.$idgrupo.'/'.$_SESSION["correo"].'/'.$fila["Nombre"].'" target="_blank" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
-                                                header('Location: amigoinvisible/regalos/'.$idgrupo.'/'.$_SESSION["correo"].'/'.$fila["Nombre"].' ');
-                                            }
-                                            else
-                                           {
-                                                echo '<td>Sin Regalo</td>';
-                                            }
-                                        }
-                                        
 
-                                        
-                                    }
+												  } 
+												  else 
+													if (result.isDenied) // Si le da al boton cancelar, cancela la eliminacion.
+													{
+														// Lo redireciona a la pagina principal.
+														window.location.href = 'http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+													}
+												})
+
+												</script>";
+											}
+										else
+										{
+											echo '<script> error(); </script>';
+										}
+										}
+									}
                                 }
                             }
                         }
@@ -424,7 +453,7 @@
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=in" type="button" class="btn btn-sm btn-outline-secondary">Invitar</a>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex" type="button" class="btn btn-sm btn-outline-secondary">Expulsar</a>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=emp" type="button" class="btn btn-sm btn-outline-secondary">Emparejar</a>';
-                                                        echo '<a href="eliminargrupo.php?id='.$fila["IDGrupo"].'" type="button" class="btn btn-sm btn-outline-secondary">Eliminar</a>';
+														echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=delgrup" type="button" class="btn btn-sm btn-outline-secondary">Eliminar</a>';
                                                     echo '</div>';
                                                 echo '</div>';
                                             echo '</div>';
@@ -499,7 +528,7 @@
 //                                                            }
 
 
-                                                            echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ver" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
+                                                            echo '<div type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</div>';
                                                         echo '</div>';
                                                     echo '</div>';
                                                 echo '</div>';
@@ -516,29 +545,6 @@
                         }
 
                     ?>
-
-                <!-- Card Plantilla -->
-<!--
-                <div class="col cardtamano">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Grupo 2</h5>
-                            <p class="card-text">
-                                Fecha Reparto: 23/10/2021
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center cardbotones">
-                                <div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Expulsar</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Emparejar</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Eliminar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
--->
 
                 </div>
             </div>
@@ -559,7 +565,7 @@
         ?>
 
         <!-- Ventana Modal - Crear Grupo -->
-        <div class="modal fade" id="ventanacreargrupo" tabindex="-1" role="dialog" aria-labelledby="titulocreargrupo" aria-hidden="true">
+        <div class="modal fade" id="ventanacreargrupo" tabindex="-1" role="dialog" aria-labelledby="titulocreargrupo" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -575,8 +581,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -584,7 +590,7 @@
         </div>
 
         <!-- Ventana Modal - Editar Grupo -->
-        <div class="modal fade" id="ventanaeditargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloeditargrupo" aria-hidden="true">
+        <div class="modal fade" id="ventanaeditargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloeditargrupo" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -601,8 +607,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -610,7 +616,7 @@
         </div>
 
         <!-- Ventana Modal - Agregar Invitado -->
-        <div class="modal fade" id="ventanainvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloinvitargrupo" aria-hidden="true">
+        <div class="modal fade" id="ventanainvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloinvitargrupo" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -628,8 +634,8 @@
                         <button id="invitar" class="btn btn-success" type="button" data-dismiss="modal">
                             Invitar
                         </button>
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -637,7 +643,7 @@
         </div>
 
         <!-- Ventana Modal - Expulsar Invitado -->
-        <div class="modal fade" id="ventanaexpulsarinvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloexpulsarinvitargrupo" aria-hidden="true">
+        <div class="modal fade" id="ventanaexpulsarinvitargrupo" tabindex="-1" role="dialog" aria-labelledby="tituloexpulsarinvitargrupo" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -649,7 +655,7 @@
                             if($_GET["opcion"]=='ex')
                             {
                                 // Consulta. Busca los correo que estan invitado al grupo selecionado.
-                                $consulta = "SELECT * FROM invitado WHERE IDGrupo = '".$_GET["id"]."';";
+                                $consulta = "SELECT * FROM invitado WHERE IDGrupo = '".$_GET["id"]."' ORDER BY Correo ASC;";
 
                                 $objeto->realizarConsultas($consulta);
 
@@ -680,8 +686,8 @@
                         <button id="expulsar" class="btn btn-success" type="button" data-dismiss="modal">
                             Expulsar
                         </button>
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+						<button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -689,7 +695,7 @@
         </div>
 
         <!-- Ventana Modal - Subir Regalo -->
-        <div class="modal fade" id="ventanasbuirregalo" tabindex="-1" role="dialog" aria-labelledby="titulosubirregalo" aria-hidden="true">
+        <div class="modal fade" id="ventanasbuirregalo" tabindex="-1" role="dialog" aria-labelledby="titulosubirregalo" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -707,10 +713,6 @@
                             // Si existe la variable $_FILES['archivo'] entra en el if.
                             if(isset($_FILES['archivo']))
                             {
-                                // Traer las operaciones de ftp
-                                //require("../assets/operaciones/procesosapp.php");
-                                //$objetoprocesosapp = new precososapp();
-
                                 // Guardar en variables los datos que se enviaron.
                                 $nombretemp = $_FILES['archivo']['tmp_name'];
                                 $nombreregalo = $_FILES['archivo']['name'];
@@ -850,8 +852,8 @@
                         ?>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -860,7 +862,7 @@
 
 
         <!-- Ventana Modal - Emparejar -->
-        <div class="modal fade" id="ventanaemparejar" tabindex="-1" role="dialog" aria-labelledby="tituloemparejar" aria-hidden="true">
+        <div class="modal fade" id="ventanaemparejar" tabindex="-1" role="dialog" aria-labelledby="tituloemparejar" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -868,164 +870,180 @@
                     </div>
                     <div class="modal-body">
                         <?php
+							// Si la opcion es emp
+							if($_GET["opcion"]=='emp')
+							{
 
-                            // Consulta. Sirve para mostrar los usuarios del grupo.
-                            $consulta = "
-                                SELECT grupos.IDGrupo, usuarios.IDUsuario, usuarios.Correo
-                                FROM grupos
-                                INNER JOIN usuariogrupo ON usuariogrupo.IDGrupo = grupos.IDGrupo
-                                INNER JOIN usuarios ON usuarios.IDUsuario = usuariogrupo.IDUsuario
-                                WHERE grupos.IDGrupo = ".$_GET["id"].";
-                            ";
+								// Consulta. Sirve para mostrar los usuarios del grupo.
+								$consulta = "
+									SELECT grupos.IDGrupo, usuarios.IDUsuario, usuarios.Correo
+									FROM grupos
+									INNER JOIN usuariogrupo ON usuariogrupo.IDGrupo = grupos.IDGrupo
+									INNER JOIN usuarios ON usuarios.IDUsuario = usuariogrupo.IDUsuario
+									WHERE grupos.IDGrupo = ".$_GET["id"].";
+								";
 
-                            //echo $consulta;
-                            $objeto->realizarConsultas($consulta);
+								//echo $consulta;
+								$objeto->realizarConsultas($consulta);
 
-                            // Si devuelve filas significa que ese grupo tiene usuarios.
-                            if($objeto->comprobarFila()>0)
-                            {
-                                // Guarda todos los correo en una array.
-                                while($fila = $objeto->extraerFilas())
-                                {
-                                    // Va guardando lo obtenido de la fila Correo en la array.
-                                    $array[] = $fila["Correo"];
-                                }
-
-                                // Visualizar la array, con la lista de usuarios del grupo.
-                                /*
-                                foreach($array as $valores)
-                                {
-                                    echo $valores.'<br>';
-                                }
-                                */
-
-                                // Contar el tamaño de la array y guardarlo.
-                                $contador = count($array);
-                                //echo $contador;
-
-                                // Si contador es impar salta mensaje.
-                                if($contador% 2 != 0 )
-                                {
-                                    echo '<script> errorimparpareja(); </script>';
-                                }
-                                else // Son numeros par la gente.
-                                {
-                                    //$contador2 = $contador-1;
-                                    // Crear una array, la cual ire agregando numeros hasta llegar a $contador.
-                                    for ($i = 1; $i <= $contador; $i++)
-                                    {
-                                        // Va guardando el contador en la array.
-                                        $arraycontador[] = $i;
-                                    }
-
-                                    // Visualizar la array contador.
-                                    /*
-                                    foreach($arraycontador as $valor)
-                                    {
-                                        echo $valor.' ';
-                                    }
-                                    */
-
-                                    // Variable contador.
-                                    $i = 1;
-
-                                    echo '<table class="table">';
-                                        echo '<thead>';
-                                            echo '<tr>';
-                                                echo '<th>Parejas</th>';
-                                                echo '<th>Quien Regala</th>';
-                                                echo '<th>Destinatario</th>';
-                                                echo '<th>Regalo</th>';
-                                            echo '</tr>';
-                                        echo '</thead>';
-									// Recorro la array, $valor son los correos.
-									foreach($array as $valor)
+								// Si devuelve filas significa que ese grupo tiene usuarios.
+								if($objeto->comprobarFila()>0)
+								{
+									// Guarda todos los correo en una array.
+									while($fila = $objeto->extraerFilas())
 									{
-										$random=array_rand($arraycontador,1);
-
-										//echo $valor.'|'.$array[$random].'<br>';
-									
-										// Si el $valor(Quien Regala) es igual a $array[$random](Destinatario random) entra en el if
-										if($valor == $array[$random])
-										{
-											// Se vuelve a barajar
-											$random=array_rand($arraycontador,1);
-											
-											// Si vuelve a ser igual entra en el if, y reinicia la pagina.
-											if($valor == $array[$random])
-											{
-												// Script para redirigir a la pagina de emparejar ese grupo.
-												echo '<script> 
-													window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php?id='?>
-														<?php echo $_GET["id"] ?><?php echo '&opcion=emp";
-												</script>';
-											}
-											
-										}
-										
-										echo '<tbody>';
-										echo '<tr>';
-										  echo '<th>'.$i.'</th>';
-										  echo '<td>'.$valor.'</td>';
-										  echo '<td >'.$array[$random].'</td>';
-										
-											// Guardo la id del grupo en una variable.
-											$idgrupo = $_GET["id"];
-										
-											// Consula. Para saber si tiene regalo la persona que regala.
-											$consulta = "
-												SELECT regalo.Ruta, regalo.Nombre
-												FROM usuarios
-												INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
-												WHERE usuarios.Correo = '".$valor."' AND regalo.Grupo = $idgrupo;
-											";
-
-											//echo $consulta;
-											$objeto->realizarConsultas($consulta);
-										
-											// Si devuelve filas significa que esa persona tiene regalo.
-											if($objeto->comprobarFila()>0)
-											{
-												$fila = $objeto->extraerFilas();
-												echo '<td><a href="/amigoinvisible/regalos/'.$_GET["id"].'/'.$valor.'/'.$fila["Nombre"].'" target="_blank">Regalo</a></td>';
-											}
-											else // SI entra aqui, significa que esa persona no subio regalo.
-											{
-												echo '<td>Vacio</td>';
-											}
-											
-										
-										echo '</tr>';
-
-										// Borra los numeros del contador, y asi no se repiten los correos.
-										unset($arraycontador[$random]);
-
-										// Va aumentando la $i
-										$i++;
-										
-										// Crear array destinatario.
+										// Va guardando lo obtenido de la fila Correo en la array.
 										$array[] = $fila["Correo"];
-										
-										
 									}
 
-                                    
+									// Visualizar la array, con la lista de usuarios del grupo.
+									/*
+									foreach($array as $valores)
+									{
+										echo $valores.'<br>';
+									}
+									*/
+
+									// Contar el tamaño de la array y guardarlo.
+									$contador = count($array);
+									//echo $contador;
+
+									// Si contador es impar salta mensaje.
+									if($contador% 2 != 0 )
+									{
+										echo '<script> errorimparpareja(); </script>';
+									}
+									else // Son numeros par la gente.
+									{
+										//$contador2 = $contador-1;
+										// Crear una array, la cual ire agregando numeros hasta llegar a $contador.
+										for ($i = 1; $i <= $contador; $i++)
+										{
+											// Va guardando el contador en la array.
+											$arraycontador[] = $i;
+										}
+
+										// Visualizar la array contador.
+										/*
+										foreach($arraycontador as $valor)
+										{
+											echo $valor.' ';
+										}
+										*/
+
+										// Variable contador.
+										$i = 1;
+
+										echo '<table class="table">';
+											echo '<thead>';
+												echo '<tr>';
+													echo '<th>Parejas</th>';
+													echo '<th>Quien Regala</th>';
+													echo '<th>Destinatario</th>';
+													echo '<th>Regalo</th>';
+												echo '</tr>';
+											echo '</thead>';
+										// Recorro la array, $valor son los correos.
+										foreach($array as $valor)
+										{
+											$random=array_rand($arraycontador,1);
+
+											//echo $valor.'|'.$array[$random].'<br>';
+
+											// Si el $valor(Quien Regala) es igual a $array[$random](Destinatario random) entra en el if
+											if($valor == $array[$random])
+											{
+												// Se vuelve a barajar
+												$random=array_rand($arraycontador,1);
+
+												// Si vuelve a ser igual entra en el if, y reinicia la pagina.
+												if($valor == $array[$random])
+												{
+													// Script para redirigir a la pagina de emparejar ese grupo.
+													echo '<script> 
+														window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php?id='?>
+															<?php echo $_GET["id"] ?><?php echo '&opcion=emp";
+													</script>';
+												}
+
+											}
+
+											echo '<tbody>';
+											echo '<tr>';
+											  echo '<th>'.$i.'</th>';
+											  echo '<td>'.$valor.'</td>';
+											  echo '<td >'.$array[$random].'</td>';
+
+												// Guardo la id del grupo en una variable.
+												$idgrupo = $_GET["id"];
+
+												// Consula. Para saber si tiene regalo la persona que regala.
+												$consulta = "
+													SELECT regalo.Ruta, regalo.Nombre
+													FROM usuarios
+													INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
+													WHERE usuarios.Correo = '".$valor."' AND regalo.Grupo = $idgrupo;
+												";
+
+												//echo $consulta;
+												$objeto->realizarConsultas($consulta);
+
+												// Si devuelve filas significa que esa persona tiene regalo.
+												if($objeto->comprobarFila()>0)
+												{
+													$fila = $objeto->extraerFilas();
+													echo '<td><a href="/amigoinvisible/regalos/'.$_GET["id"].'/'.$valor.'/'.$fila["Nombre"].'" target="_blank">Regalo</a></td>';
+												}
+												else // SI entra aqui, significa que esa persona no subio regalo.
+												{
+													echo '<td>Vacio</td>';
+												}
+
+
+											echo '</tr>';
+
+											// Guardo las ID de los destinatarios en una array.
+											$arraydestinatarios[] = $array[$random];
+
+											// Borra los numeros del contador, y asi no se repiten los correos.
+											unset($arraycontador[$random]);
+
+											// Va aumentando la $i
+											$i++;
+
+											// Crear array destinatario.
+
+
+										}
+									}
+
+									echo '</table>';
+
+									// Se crea las variables para obtener las raids de las personas 
+									echo '<script> 
+													var regala ='?>
+														<?php echo json_encode($array); ?><?php echo ';
+													var destinatario ='?>
+														<?php echo json_encode($arraydestinatarios); ?><?php echo ';	
+													var grupo ='?>
+														<?php echo $_GET["id"]; ?><?php echo ';	
+												</script>';
+
+
+
+
+
+									echo '<button id="repartir" class="btn btn-warning" type="button" data-dismiss="modal">Repartir</button>';
 
 								}
-                                
-                                echo '</table>';
-
-                                echo '<button class="btn btn-warning" type="button" data-dismiss="modal">Repartir</button>';
-
-                            }
-
-
+								
+							}
                         ?>
                     </div>
                     <div class="modal-footer">
                         <?php echo '<a href="grupos.php?id='.$_GET["id"].'&opcion=emp" class="btn btn-success" type="button">Volver a emparejar</a>'; ?>
-                        <button class="btn btn-warning" type="button" data-dismiss="modal">
-                            Cancelar
+                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
+                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
                     </div>
                 </div>
@@ -1072,23 +1090,3 @@
         </footer>
     </body>
 </html>
-
-
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
