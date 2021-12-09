@@ -69,7 +69,7 @@ $(document).ready(function () {
     $("#editar").click(function(event){
 
         event.preventDefault(); // Mostrar un mensaje del servidor.
-
+	
         // Recoge los datos de los elmentos de la id y lo guarda en una variable.
         var nombregrupo = $("#nombregrupo2").val();
         var fechareparto = $("#fechareparto2").val();
@@ -81,10 +81,9 @@ $(document).ready(function () {
             fechareparto: fechareparto,
             idgrupo: idgrupo
         }, function(respuesta){
-//            $("#info").text(respuesta)
-            console.log(respuesta)
+            //console.log(respuesta)
 
-            // Si devuelve un Si, muestra un mensaje personalizado que se edito y lo redirige a grupos.php
+            //Si devuelve un Si, muestra un mensaje personalizado que se edito y lo redirige a grupos.php
             if(respuesta == "Si")
             {
                 Swal.fire({
@@ -187,8 +186,8 @@ $(document).ready(function () {
             success:function(respuesta)
             {
                 console.log(respuesta);
-                // Si devuelve un Si, muestra un mensaje personalizado que se edito y lo redirige a grupos.php
-                if(respuesta == "Si")
+                // Si devuelve un numero mayor a 0, muestra un mensaje personalizado que se invito correctamente y lo redirige a grupos.php
+                if(respuesta > 0 )
                 {
                     Swal.fire({
                       icon: 'success',
@@ -207,15 +206,15 @@ $(document).ready(function () {
                       }
                     })
                 }
-                else // En caso que sea No o cualquier otro valor de error.
+                else // En caso que sea cualquier otro valor da error.
                 {
-					// Si devuelve mensaje Duplicado, el correo que se invito ya tiene una invitacion.
-					if(respuesta == "Duplicado")
+					// Si devuelve mensaje Mismo, el correo que se invito es él mismo.
+					if(respuesta == "Mismo")
 					{
 						Swal.fire({
 						  icon: 'error',
-						  title: 'Duplicado',
-						  text: 'Ese correo o varios ya fueron invitados',
+						  title: 'Propio',
+						  text: 'No te puedes invitar a ti mismo.',
 						  showConfirmButton: false,
 						}).then((result) => {
 						  if (result.isConfirmed)
@@ -230,43 +229,21 @@ $(document).ready(function () {
 					}
 					else // En caso que devuelve otra cosa da error.
 					{
-						// Si devuelve mensaje Mismo, el correo que se invito es él mismo..
-						if(respuesta == "Mismo")
-						{
-							Swal.fire({
-							  icon: 'error',
-							  title: 'Propio',
-							  text: 'No te puedes invitar a ti mismo',
-							  showConfirmButton: false,
-							}).then((result) => {
-							  if (result.isConfirmed)
-							  {
-									window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-							  }
-							  else
-							  {
-								  window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-							  }
-							})
-						}
-						else // En caso que devuelve otra cosa da error.
-						{
-							Swal.fire({
-							  icon: 'error',
-							  title: 'Oops...',
-							  text: 'Ocurrio algo inesperado y no se pudo editar el grupo.',
-							  showConfirmButton: false,
-							}).then((result) => {
-							  if (result.isConfirmed)
-							  {
-									window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-							  }
-							  else
-							  {
-								  window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-							  }
-							})
-						}
+						Swal.fire({
+						  icon: 'error',
+						  title: 'Oops...',
+						  text: 'Ocurrio algo inesperado y no se pudo invitar al grupo.',
+						  showConfirmButton: false,
+						}).then((result) => {
+						  if (result.isConfirmed)
+						  {
+								window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+						  }
+						  else
+						  {
+							  window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+						  }
+						})
 					}
                 }
             }
@@ -283,10 +260,10 @@ $(document).ready(function () {
             destinatario: destinatario,
 			grupo, grupo
         }, function(respuesta){
-            console.log(respuesta)
+            //console.log(respuesta)
 
             //Si devuelve un Si, muestra un mensaje personalizado que se edito y lo redirige a grupos.php
-            if(respuesta == "SiSiSiSi")
+            if(respuesta > 0)
             {
                 Swal.fire({
                   icon: 'success',
@@ -307,21 +284,43 @@ $(document).ready(function () {
             }
             else // En caso que sea No o cualquier otro valor de error.
             {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Ocurrio algo inesperado y no se pudo editar el grupo.',
-                  showConfirmButton: false,
-                }).then((result) => {
-                  if (result.isConfirmed)
-                  {
-                        window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-                  }
-                  else
-                  {
-                      window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
-                  }
-                })
+				if(respuesta == "FaltaRegalos")
+				{
+					Swal.fire({
+					  icon: 'info',
+					  title: 'Falta Regalos',
+					  text: 'Falta gente por subir regalos.',
+					  showConfirmButton: false,
+					}).then((result) => {
+					  if (result.isConfirmed)
+					  {
+							window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+					  }
+					  else
+					  {
+						  window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+					  }
+					})
+				}
+				else
+				{
+					Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Ocurrio algo inesperado y no se pudo editar el grupo.',
+					  showConfirmButton: false,
+					}).then((result) => {
+					  if (result.isConfirmed)
+					  {
+							window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+					  }
+					  else
+					  {
+						  window.location.replace("http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php");
+					  }
+					})
+				}
+                
             }
 
 

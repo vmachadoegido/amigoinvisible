@@ -81,7 +81,7 @@ CREATE TABLE regalo
     Usuario SMALLINT UNSIGNED NOT NULL,
 
 
-    FOREIGN KEY (Destinatario) REFERENCES regalo(Usuario),
+    FOREIGN KEY (Destinatario) REFERENCES usuarios(IDUsuario) ON DELETE CASCADE,
     FOREIGN KEY (Grupo) REFERENCES grupos(IDGrupo) ON DELETE CASCADE,
     FOREIGN KEY (Usuario) REFERENCES usuarios(IDUsuario) ON DELETE CASCADE
 

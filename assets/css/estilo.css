@@ -1,11 +1,13 @@
+/* Fuente de texto */
 *
 {
     font-family: "Open Sans", sans-serif;
 }
 
+/* Estilos de la cabezera*/
 #cabezera
 {
-    background-image: url(https://fundacionloyola.com/vguadalupe/wp-content/uploads/2019/12/slide00.jpg);
+    background-image: url(../imagenes/slide00.jpg); 
     background-size: cover;
     background-position: center center;
     height: 416px;

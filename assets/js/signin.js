@@ -1,5 +1,21 @@
-function onSignIn(googleUser) 
-{
+/**
+* Alumno: Victor Manuel Machado Egido.
+*
+* Centro Educativo: Escuela Virgen de Guadalupe.
+*
+* Ciclo Formativo: Desarrollo de Aplicaciones Web.
+*
+* Curso: 2020-2021.
+*
+* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+*/
+
+/**
+* Funcion para obtener la informacion de la cuenta de google
+* @param {String} googleUser 
+*
+*/
+function onSignIn(googleUser){
 	//Informacion basica del perfil, logeado
     var profile = googleUser.getBasicProfile();
     
@@ -8,38 +24,44 @@ function onSignIn(googleUser)
 }
 
 
-// Funcion para desconectar
-function signOut() 
-{
+/**
+* Funcion para desconectar de la cuenta de google. (No funciona).
+*/
+
+function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
-        // Mensaje de consolta para decir que se desconecto
-        console.log('El usuario se desconecto');
-        // Lo redirige a la pagina principal.
-//        window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/";
+	// Mensaje de consolta para decir que se desconecto
+	console.log('El usuario se desconecto');
+	// Lo redirige a la pagina principal.
+	// window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/";
   });
 }
-// Funcion de carga
-function onLoad() 
-{
+
+/**
+* Funcion de carga. (No funciona)
+*/
+function onLoad() {
   gapi.load('auth2', function() {
     gapi.auth2.init();
   });
 }
-    
 
-//Funcion para logearse
-function auth(action, profile = null)
-{
+/**
+* Funcion para logearse a traves de google.
+* @param {String} action 	Lo recibe de la funcion onSignIn.
+* @param {String} profile 	Lo recibe de la funcion onSignIn.
+* 
+*/
+function auth(action, profile = null){
+	// Variable local, para guardar el estado de la accion de UserAction.
     let data = { UserAction : action };
     
     //console.log(action);
 
-    if(profile)
-    {
+    if(profile){
 		// Los datos que trae el profile.
-         data =
-            {
+         data ={
 				UserID : profile.getId(),
                 UserName : profile.getGivenName(),
                 UserLastName : profile.getFamilyName(),

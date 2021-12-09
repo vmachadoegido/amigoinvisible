@@ -1,14 +1,28 @@
 <?php
+	/**
+	* Alumno: Victor Manuel Machado Egido.
+	*
+	* Centro Educativo: Escuela Virgen de Guadalupe.
+	*
+	* Ciclo Formativo: Desarrollo de Aplicaciones Web.
+	*
+	* Curso: 2020-2021.
+	*
+	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	*/
+
     // Iniciar session
     session_start();
 
-    // Traerme los datos de conexion.
+    // Traerme los datos de operaciones.
     require("../assets/operaciones/operaciones.php");
-    // Crear el objeto de operaciones.
-    $objeto=new operaciones();
+    // Crear el objeto de Operaciones.
+    $objeto = new Operaciones();
 
-    require("../assets/operaciones/procesosapp.php");
-    $objetoprocesosapp = new precososapp();
+	// Traerme los datos de operaciones_ftp.
+    require("../assets/operaciones/operaciones_ftp.php");
+	// Crear el objeto de Operaciones_ftp.
+    $objetoprocesosapp = new Operaciones_ftp();
 
 
 ?>
@@ -32,10 +46,9 @@
         <!-- Estilos Generales -->
         <link href="../assets/css/estilo.css" rel="stylesheet">
 
-        <!-- Libreria de Alertas -->
+		<!-- Libreria de Alertas  -->
         <!-- Pagina https://sweetalert2.github.io -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
         <!-- Librerias para jquere, google, boostrap, etc. -->
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
@@ -55,8 +68,7 @@
         <?php
 
             // Si no hay sesion correo, mensaje de alerta.
-            if(!isset($_SESSION["correo"]))
-            {
+            if(!isset($_SESSION["correo"])){
                 // Mensaje de alerta que no ha iniciado sesion
                 echo '<script> nologeado(); </script>';
             }
@@ -65,7 +77,7 @@
             $fechahoy = date('Y-m-d');
         ?>
 		
-         <!-- Revisa si esta invitado algun grupo y lo registra -->
+        <!-- Revisa si esta invitado algun grupo y lo registra -->
         <?php
             // Guardo la variable de la sesion del correo.
             $correo = $_SESSION["correo"];
@@ -80,19 +92,15 @@
             $objeto->realizarConsultas($consulta);
 
             // Si devuelve filas, significa que ese correo esta invitado algun grupo y entra en el if.
-            if($objeto->comprobarFila()>0)
-            {
+            if($objeto->comprobarFila()>0){
                 // Se extrae el resultado de la consulta y se guarda en bucle en $fila, y a continuacion se va guardando la IDGrupo en una array
-                while($fila = $objeto->extraerFilas())
-                {
+                while($fila = $objeto->extraerFilas()){
                     // Guardo el dato recibido de la fila IDGrupo en una variable.
                     $array[] = $fila["IDGrupo"];
-
                 }
                 // Se recorre la array con los valores de la IDGrupos, que es invitado el usuario.
-                foreach($array as $valor)
-                {
-                    //echo $valor.'-';
+                foreach($array as $valor){
+                    // echo $valor.'-';
                     // Consulta. Comprueba si el correo y el grupo de la invitacion ya esta fue registrado o no.
                     $consulta ="
                         SELECT usuarios.IDUsuario, usuarios.Correo, grupos.IDGrupo, grupos.Propietario
@@ -107,41 +115,36 @@
 
                     // Si devuelve filas, significa que ese correo ya esta registrado en ese grupo.
                     if($objeto->comprobarFila()>0)
-                    {
-                        echo '<script> console.log("Ya esta registrado en el grupo"); </script>';
-                    }
-                    else // Si entra aqui significa, que no esta registrado en el grupo.
-                    {
-                        echo '<script> console.log("No esta registrado en el grupo"); </script>';
+                        echo '<script> console.log("Esta en un grupo."); </script>';
+                    else /* Si entra aqui significa, que no esta registrado en el grupo.*/{
+                        echo '<script> console.log("Registrandote en el grupo..."); </script>';
 
+						// Consulta. Busca a ese usuario si esta registrado.
                         $consulta ="
                             SELECT IDUsuario, Correo
                             FROM usuarios
                             WHERE usuarios.Correo = '".$correo."';
                         ";
                         //print($consulta);
-
                         $objeto->realizarConsultas($consulta);
-                        if($objeto->comprobarFila()>0)
-                        {
+						
+						// Si devuelve filas, significa que esta registrado en la web.
+                        if($objeto->comprobarFila()>0){
                             // Extrar las filas de la consulta.
                             $fila = $objeto->extraerFilas();
-
                             //echo '<br>IDUsuario: '.$fila["IDUsuario"].'-'.$valor.'<br><br>';
+							
                             // Se guarda la IDUsuario en una variable.
                             $idusuario = $fila["IDUsuario"];
 
-                            // Se introduce la IDUsurio y la IDGrupo del invitado
+                            // Consulta. Se introduce la IDUsurio y la IDGrupo del invitado
                             $consulta = "INSERT INTO usuariogrupo (IDUsuario, IDGrupo) VALUES ('".$idusuario."', '".$valor."')";
                             $objeto->realizarConsultas($consulta);
 
                             // Si devuelve filas significa que se inserto correctamente.
                             if($objeto->comprobar()>0)
-                            {
-                                echo '<script> console.log("Se agrego el usuario al grupo"); </script>';
-                            }
-                            else // No se inserto los datos.
-                            {
+                            	echo '<script> console.log("Se agrego el usuario al grupo"); </script>';
+                            else /* No se inserto los datos. */{
                                 echo '<script> console.log("Hubo un problema al agregar el usuario al grupo"); </script>';
                             }
                         }
@@ -155,48 +158,39 @@
 
             // Comprueba si existe la variable $_GET["id"].
             // En caso que exista entra en el if por lo contrario no hace nada.
-            if(isset($_GET["id"]))
-            {
+            if(isset($_GET["id"])){
                 // Comprueba si la variable $_GET["opcion"] es igual a 'ed' (editar), en caso que no sea asi se va al else.
                 // Ejecuta la ventana modal de editar grupo. Lo hace visible.
-                if($_GET["opcion"]=='ed')
-                {
-					if($_SESSION["rol"] == "p")
-					{
+                if($_GET["opcion"]=='ed'){
+					// Si tiene el rol p (Profesor) podra entrar al if.
+					if($_SESSION["rol"] == "p"){
+						// Ejecuta un script, para abrir la ventana modal.
 						echo '<script>
                             $(document).ready(function(){
                               $("#ventanaeditargrupo").modal();
                             });
                         </script>';
-					}
-					else
-					{
+					}else
 						echo '<script> error(); </script>';
-					}
                 }
 				else
                 {
                     // Opcion para invitado
-                    if($_GET["opcion"]=='in')
-                    {
-						if($_SESSION["rol"] == "p")
-						{
+                    if($_GET["opcion"]=='in'){
+						// Si tiene el rol p (Profesor) podra entrar al if.
+						if($_SESSION["rol"] == "p"){
+							// Ejecuta un script, para abrir la ventana modal.
 							echo '<script>
                             	$(document).ready(function(){
 							$("#ventanainvitargrupo").modal();
                             	});
                         	</script>';
-						}
-						else
-						{
+						}else
 							echo '<script> error(); </script>';
-						}
-                    }
-                    else
-                    {
+                    }else{
                         // Opcion para expulsar
-                        if($_GET["opcion"]=='ex' and isset($_GET["correo"]) and isset($_GET["id"]))
-                        {
+						// Si en la url, tiene la opcion ex, esta definada correo y la id entra.
+                        if($_GET["opcion"]=='ex' and isset($_GET["correo"]) and isset($_GET["id"])){
 							// Alerta para que se confirma la expulsion de alguien del grupo
 							echo "<script>
 							Swal.fire({
@@ -207,20 +201,16 @@
 							  denyButtonText: 'No expulsar',
 							  allowOutsideClick: false,
 							}).then((result) => {
-							  if (result.isConfirmed) // Si le da al boton confirmar, elimina el usuario.
-							  {
+							  if (result.isConfirmed) /* Si le da al boton confirmar, elimina el usuario.*/{
 							  		// Guardo las variables del correo (expulsar) y la id del grupo
 									var correexpulsado= '"?><?php echo $_GET["correo"] ?><?php echo "';
 									var laidgrupo= '"?><?php echo $_GET["id"] ?><?php echo "';
  
 									// Enviamos la variable de javascript a archivo.php
-									$.post('expulsar.php',{'correexpulsado':correexpulsado, 'laidgrupo':laidgrupo},function(respuesta)
-									{
+									$.post('expulsar.php',{'correexpulsado':correexpulsado, 'laidgrupo':laidgrupo},function(respuesta){
 										//alert(respuesta);
-										
 										// Si se recibe un Si, significa que fue eliminado todo.
-										if(respuesta == 'Si')
-										{
+										if(respuesta == 'Si'){
 											Swal.fire({
 											  icon: 'success',
 											  title: 'Correcto',
@@ -230,37 +220,26 @@
 											  confirmButtonText: 'Actualizar',
 											  allowOutsideClick: false
 											}).then((result) => {
-											  if (result.isConfirmed)
-											  {
+											  if (result.isConfirmed){
 													window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
-											  }
-											  else
-											  {
+											  }else
 													window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
-											  }
 											})
 										}
 									});
-							
-							
-								
 							  } 
 							  else 
-							  	if (result.isDenied) // Si le da al boton cancelar, cancela la eliminacion.
-								{
+							  	if (result.isDenied) /* Si le da al boton cancelar, cancela la eliminacion.*/{
 									// Lo redireciona a la pagina principal.
 									window.location.href = 'http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
 							  	}
 							})
-							
 							</script>";
-                        }
-                        else
-                        {
-                            if($_GET["opcion"]=='ex')
-                            {
-								if($_SESSION["rol"] == "p")
-								{
+                        }else{
+                            if($_GET["opcion"]=='ex'){
+								// Si tiene el rol p (Profesor) podra entrar al if.
+								if($_SESSION["rol"] == "p"){
+									// Ejecuta un script, para abrir la ventana modal.
 									echo '<script>
 										$(document).ready(function(){
 										  $("#ventanaexpulsarinvitargrupo").modal();
@@ -268,45 +247,32 @@
                                 	</script>';
 								}
 								else
-								{
 									echo '<script> error(); </script>';
-								}
                                 
-                            }
-                            else
-                            {
-                                if($_GET["opcion"]=='subir')
-                                {
+                            }else{
+                                if($_GET["opcion"]=='subir'){
+									// Ejecuta un script, para abrir la ventana modal.
                                     echo '<script>
                                         $(document).ready(function(){
                                           $("#ventanasbuirregalo").modal();
                                         });
                                     </script>';
-                                }
-                                else
-                                {
-                                    if($_GET["opcion"]=='emp')
-                                    {
-										if($_SESSION["rol"] == "p")
-										{
+                                }else{
+                                    if($_GET["opcion"]=='emp'){
+										// Si tiene el rol p (Profesor) podra entrar al if.
+										if($_SESSION["rol"] == "p"){
+											// Ejecuta un script, para abrir la ventana modal.
 											echo '<script>
 												$(document).ready(function(){
 												  $("#ventanaemparejar").modal();
 												});
                                         	</script>';
-										}
-										else
-										{
+										}else
 											echo '<script> error(); </script>';
-										}
-                                    }
-									else
-									{
-										if($_GET["opcion"]=='delgrup')
-										{
-											
-											if($_SESSION["rol"] == "p")
-											{
+                                    }else{
+										if($_GET["opcion"]=='delgrup'){
+											// Si tiene el rol p (Profesor) podra entrar al if.
+											if($_SESSION["rol"] == "p"){
 												// Alerta para que se confirma la expulsion de alguien del grupo
 												echo "<script>
 												Swal.fire({
@@ -317,20 +283,16 @@
 												  denyButtonText: 'No eliminar',
 												  allowOutsideClick: false,
 												}).then((result) => {
-												  if (result.isConfirmed) // Si le da al boton confirmar, elimina el usuario.
-												  {
+												  if (result.isConfirmed) /* Si le da al boton confirmar, elimina el usuario.*/{
 														// Guardo las variables del correo (expulsar) y la id del grupo
 														var correepropietario= '"?><?php echo $_SESSION["correo"] ?><?php echo "';
 														var laidgrupo= '"?><?php echo $_GET["id"] ?><?php echo "';
 
 														// Enviamos la variable de javascript a archivo.php
-														$.post('eliminargrupo.php',{'correepropietario':correepropietario, 'laidgrupo':laidgrupo},function(respuesta)
-														{
-															alert(respuesta);
-
+														$.post('eliminargrupo.php',{'correepropietario':correepropietario, 'laidgrupo':laidgrupo},function(respuesta){
+															//alert(respuesta);
 															// Si se recibe un Si, significa que fue eliminado todo.
-															if(respuesta == 'Si')
-															{
+															if(respuesta == 'Si'){
 																Swal.fire({
 																  icon: 'success',
 																  title: 'Correcto',
@@ -340,35 +302,23 @@
 																  confirmButtonText: 'Actualizar',
 																  allowOutsideClick: false
 																}).then((result) => {
-																  if (result.isConfirmed)
-																  {
-																		window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
-																  }
-																  else
-																  {
-																		window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+																  if (result.isConfirmed){
+																  	window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
+																  }else{
+																	window.location.href = 'https://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
 																  }
 																})
 															}
 														});
-
-
-
-												  } 
-												  else 
-													if (result.isDenied) // Si le da al boton cancelar, cancela la eliminacion.
-													{
+												  }else 
+													if (result.isDenied) /* Si le da al boton cancelar, cancela la eliminacion.*/{
 														// Lo redireciona a la pagina principal.
 														window.location.href = 'http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php';
 													}
 												})
-
 												</script>";
-											}
-										else
-										{
-											echo '<script> error(); </script>';
-										}
+											}else // No tiene ese rol
+												echo '<script> error(); </script>';
 										}
 									}
                                 }
@@ -378,9 +328,7 @@
                 }
             }
         ?>
-
-        <div id="info"></div>
-
+		
         <!-- Cabezera - Navegador -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
             <!-- Imagen de la corpoativa -->
@@ -418,8 +366,7 @@
                     <!-- Bucle Card -->
                     <?php
                         // Si la variable $_SESSION["rol"] contiene una "p" entra al if, en caso contrario al else
-                        if($_SESSION["rol"] == "p")
-                        {
+                        if($_SESSION["rol"] == "p"){
                             // Consulta, donde saca la informacion donde el usuario que se obtiene de $_SESSION["correo"], sea propietario.
                             $consulta = "
                                 SELECT usuarios.IDUsuario, usuarios.Correo, grupos.Nombre, grupos.IDGrupo, grupos.Fecha_Fin, grupos.Propietario
@@ -433,12 +380,10 @@
                             // Comprueba si devuelve o no filas la consulta.
                             // En caso devolver significa que ese usuario es propietario de un grupo y ejecuta en bucle la info.
                             // En caso que no devuelva signicia que ese usuario no es propietario de ningun grupo.
-                            if($objeto->comprobarFila()>0)
-                            {
+                            if($objeto->comprobarFila()>0){
                                 // Extraer filas - Bucle para todos los grupos que gestione.
                                 // Extrae las filsa de la consulta, y lo va mostrando con sus diferenes opciones de gestion.
-                                while($fila = $objeto->extraerFilas())
-                                {
+                                while($fila = $objeto->extraerFilas()){
                                     echo '<div class="col cardtamano">';
                                         echo '<div class="card shadow-sm">';
                                             echo '<div class="card-body">';
@@ -449,7 +394,6 @@
                                                 echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
                                                     echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ed" type="button" class="btn btn-sm btn-outline-secondary">Editar</a>';
-                                                        //echo '<button type="button" class="btn btn-sm btn-outline-secondary">Invitar</button>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=in" type="button" class="btn btn-sm btn-outline-secondary">Invitar</a>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=ex" type="button" class="btn btn-sm btn-outline-secondary">Expulsar</a>';
                                                         echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=emp" type="button" class="btn btn-sm btn-outline-secondary">Emparejar</a>';
@@ -461,12 +405,9 @@
                                     echo '</div>';
                                 }
                             }
-                        }
-                        else
-                        {
+                        }else{
                             // Si la variable $_SESSION["rol"], contiene una "a" entra en el if, en caso que no lo sea no hace nada.
-                            if($_SESSION["rol"] == "a")
-                            {
+                            if($_SESSION["rol"] == "a"){
                                 // Consulta. Donde busca que grupo pertenece el usuario.
                                 $consulta = "
                                     SELECT usuarios.IDUsuario, usuarios.Correo, grupos.IDGrupo, grupos.Nombre, grupos.Fecha_Inicio, grupos.Fecha_Fin, grupos.Propietario
@@ -481,79 +422,38 @@
                                 // Comprueba que devuelva filas la consulta.
                                 // Si devuelve filas mostrara los datos de los grupos que pertenece.
                                 // Si no devuelve filas no hara nada.
-                                if($objeto->comprobarFila()>0)
-                                {
-
+                                if($objeto->comprobarFila()>0){
                                     // Extraer filas - Bucle para todos los grupos que participa.
                                     // Extrae las filas de la consulta y lo va mostrando en diferentes tarjetas.
-                                    while($fila = $objeto->extraerFilas())
-                                    {
-                                        echo '<div class="col cardtamano">';
-                                            echo '<div class="card shadow-sm">';
-                                                echo '<div class="card-body">';
-                                                    echo '<h5 class="card-title">'.$fila["Nombre"].'</h5>';
-                                                    echo '<p class="card-text">';
-                                                        echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
-                                                    echo '</p>';
-                                                    echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
-                                                        echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
-                                                            echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=subir" type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</a>';
-
-                                                            $idgrupover = $fila["IDGrupo"];
-                                                            $usuario = $_SESSION["correo"];
-                                        
-
-                                                            //$objetoprocesosapp->verregalo($idgrupover, $usuario);
-                                        
-                                        
-//                                                            $consulta2="
-//                                                                SELECT regalo.Ruta, regalo.Nombre
-//                                                                FROM usuarios
-//                                                                INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
-//                                                                WHERE usuarios.Correo = '".$_SESSION["correo"]."' AND regalo.Grupo = $idgrupover;
-//                                                            ";
-//                                                            echo $consulta2.'</br>';
-//                                                            $objeto->realizarConsultas($consulta2);
-//
-//
-//                                                            if($objeto->comprobarFila()>0)
-//                                                            {
-//                                                                $fila2 = $objeto->extraerFilas();
-//                                                                echo '<a href="/amigoinvisible/regalos/'.$idgrupover.'/'.$_SESSION["correo"].'/'.$fila2["Nombre"].'" target="_blank" type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</a>';
-//
-//                                                            }
-//                                                            else
-//                                                            {
-//                                                                echo '<td>Sin Regalo</td>';
-//                                                            }
-
-
-                                                            echo '<div type="button" class="btn btn-sm btn-outline-secondary">Ver Regalo</div>';
-                                                        echo '</div>';
-                                                    echo '</div>';
-                                                echo '</div>';
-                                            echo '</div>';
-                                        echo '</div>';
+                                    while($fila = $objeto->extraerFilas()){
+										echo '<div class="col cardtamano">';
+											echo '<div class="card shadow-sm">';
+												echo '<div class="card-body">';
+													echo '<h5 class="card-title">'.$fila["Nombre"].'</h5>';
+													echo '<p class="card-text">';
+														echo 'Fecha Reparto: '.$fila["Fecha_Fin"].'';
+													echo '</p>';
+													echo '<div class="d-flex justify-content-between align-items-center cardbotones">';
+														echo '<div class="btn-group row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-4 g-3">';
+															echo '<a href="grupos.php?id='.$fila["IDGrupo"].'&opcion=subir" type="button" class="btn btn-sm btn-outline-secondary">Subir Regalo</a>';
+														echo '</div>';
+													echo '</div>';
+												echo '</div>';
+											echo '</div>';
+										echo '</div>';
                                     }
-                                    
-                                    
-                                    
-                                    
-                                    
                                 }
                             }
                         }
-
                     ?>
-
                 </div>
             </div>
         </div>
 
         <!-- Boton para agregar grupos. Solo perfil Profesor-->
         <?php
-            if($_SESSION["rol"]=="p")
-            {
+			// Si $_SESSION["rol"] contiene la p, significa que es profesor.
+            if($_SESSION["rol"]=="p"){
                 echo '<button class="botonagregar" data-toggle="modal" data-target="#ventanacreargrupo">';
                     echo '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
                         echo '<circle cx="12" cy="12" r="10"></circle>';
@@ -574,9 +474,9 @@
                     <div class="modal-body">
                         <form method="POST">
                             <label for="nombregrupo" required>Nombre del Grupo </label>
-                            <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
+                            <input type="text" id="nombregrupo" name="nombregrupo" placeholder="Nombre del Grupo" required><br/><br/>
                             <label for="fechareparto" required>Fecha del Reparo</label>
-                            <?php echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
+                            <?php echo '<input type="date" id="fechareparto" name="trip-start" value="'.$fechahoy.'" required>'; ?>
                             <input type="submit" id="crear" value="Crear" name="Crear">
                         </form>
                     </div>
@@ -597,16 +497,18 @@
                         <h5 id="tituloeditargrupo">Editar Grupo <?php echo ''.$_GET["id"].''?></h5>
                     </div>
                     <div class="modal-body">
-                        <form method="POST">
+                        <form id="formularioeditar" method="POST">
                             <input type="hidden" id="idgrupo" value="<?php echo ''.$_GET["id"].''?>">
-                            <label for="nombregrupo2" required>Nuevo nombre del Grupo</label>
-                            <input type="text" id="nombregrupo2" name="nombregrupo" placeholder="Nombre del Grupo" required/><br/><br/>
-                            <label for="fechareparto" required>Nueva Fecha del Reparo</label>
-                            <?php echo '<input type="date" id="fechareparto2" name="trip-start" value="'.$fechahoy.'" required/>'; ?>
-                            <input type="submit" id="editar" value="Editar" name="Editar">
+                            <label for="nombregrupo2" >Nuevo nombre del Grupo</label>
+                            <input type="text" id="nombregrupo2" name="nombregrupo2" placeholder="Nombre del Grupo" required /><br/><br/>
+                            <label for="fechareparto">Nueva Fecha del Reparto</label>
+                            <input type="date" id="fechareparto2" name="trip-start" required />
                         </form>
                     </div>
                     <div class="modal-footer">
+						<button id="editar" class="btn btn-success" type="button" data-dismiss="modal">
+                            Editar
+                        </button>
                         <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
                             <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
                         </button>
@@ -651,18 +553,15 @@
                     </div>
                     <div class="modal-body">
                         <?php
-
-                            if($_GET["opcion"]=='ex')
-                            {
+							// Si $_GET["opcion"] contiene ex entra en el if.
+                            if($_GET["opcion"]=='ex'){
                                 // Consulta. Busca los correo que estan invitado al grupo selecionado.
                                 $consulta = "SELECT * FROM invitado WHERE IDGrupo = '".$_GET["id"]."' ORDER BY Correo ASC;";
-
                                 $objeto->realizarConsultas($consulta);
 
-                                if($objeto->comprobarFila()>0)
-                                {
-                                    while($fila = $objeto->extraerFilas())
-                                    {
+								// Si se obtiene filas, significa que hay correos invitados a ese grupo.
+                                if($objeto->comprobarFila()>0){
+                                    while($fila = $objeto->extraerFilas()){
                                         echo '<table>';
                                             echo '<tr>';
                                                 echo '<td>';
@@ -674,11 +573,8 @@
                                             echo '</tr>';
                                         echo '</table>';
                                     }
-                                }
-                                else
-                                {
-                                    echo '<script> error(); </script>';
-                                }
+                                }else // Si no hay invitados
+                                	echo '<script> error(); </script>';
                             }
                         ?>
                     </div>
@@ -711,8 +607,7 @@
                         </form>
                         <?php
                             // Si existe la variable $_FILES['archivo'] entra en el if.
-                            if(isset($_FILES['archivo']))
-                            {
+                            if(isset($_FILES['archivo'])){
                                 // Guardar en variables los datos que se enviaron.
                                 $nombretemp = $_FILES['archivo']['tmp_name'];
                                 $nombreregalo = $_FILES['archivo']['name'];
@@ -723,77 +618,93 @@
                                 $fechahoy = date('Y-m-d');
 
                                 // Si el formato es desconocido
-                                if($formato == 'application/octet-stream' OR $formato == 'application/octet-stream')
-                                {
+                                if($formato == 'application/octet-stream' OR $formato == 'application/octet-stream'){
                                     echo '<script> errortipoarchivo(); </script>';
-                                }
-                                else
-                                {
+                                }else{
                                     // Consulta la cual devuelve filas si ese usuario ya subio algun regalo.
                                     $consulta = "
-                                        SELECT usuarios.Correo, usuarios.IDUsuario, regalo.IDRegalo, regalo.Grupo, regalo.Nombre
-                                        FROM usuarios, regalo
+                                        SELECT usuarios.Correo, usuarios.IDUsuario, regalo.IDRegalo, regalo.Grupo, regalo.Nombre 
+                                        FROM usuarios
+										INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
                                         WHERE usuarios.Correo = '".$correousuario."' AND regalo.Grupo = $grupoid;
                                     ";
-
                                     //echo $consulta;
                                     $objeto->realizarConsultas($consulta);
 
                                     // Si devuelve filas, significa que ese usuario ya subio algun correo.
-                                    if($objeto->comprobarFila()>0)
-                                    {
+                                    if($objeto->comprobarFila()>0){
                                         // Se extrae las filas.
                                         $fila = $objeto->extraerFilas();
 
                                         // Se guarda en una variable el nombre del regalo anterior.
-                                        $nombreregaloanitguo = $fila["Nombre"];
+                                        $nombreregaloantiguo = $fila["Nombre"];
                                         $idusaruio = $fila["IDUsuario"];
+										
+										// Si el nombre del regalo nuevo es igual al que esta guardado entra en el if
+										if($nombreregalo == $nombreregaloantiguo){
+											
+											// Renombrar el archivo del servidor
+											$objetoprocesosapp->renombrarmismo($grupoid, $correousuario, $nombreregaloantiguo);
+											
+											// Funcion, se le envia los datos y si retorna un Si entra. Significa que se subio el archivo.
+											if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si"){
+												// Funcion que elimina el archivo antiguo. Si retorna Si entra. Signficia que se elimino.
+												if($objetoprocesosapp->eliminararchivo($grupoid, $correousuario, $nombreregaloantiguo) == "Si"){
+													// Consulta. Actualizar los datos de la BD con el nuevo regalo.
+													$consulta = "
+														UPDATE regalo
+														SET
+														Nombre = '$nombreregalo',
+														Volumen = $volumen,
+														Formato = '$formato',
+														Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
+														Fecha_Subida = '$fechahoy',
+														Grupo = $grupoid,
+														Usuario = $idusaruio
+														WHERE Grupo = $grupoid AND Usuario = $idusaruio;
+													";
+													$objeto->realizarConsultas($consulta);
 
-                                        // Funcion, se le envia los datos y si retorna un Si entra. Significa que se subio el archivo.
-                                        if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
-                                        {
-                                            // Funcion que elimina el archivo antiguo. Si retorna Si entra. Signficia que se elimino.
-                                            if($objetoprocesosapp->eliminararchivo($grupoid, $correousuario, $nombreregaloanitguo) == "Si")
-                                            {
-                                                // Consulta. Actualizar los datos de la BD con el nuevo regalo.
-                                                $consulta = "
-                                                    UPDATE regalo
-                                                    SET
-                                                    Nombre = '$nombreregalo',
-                                                    Volumen = $volumen,
-                                                    Formato = '$formato',
-                                                    Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
-                                                    Fecha_Subida = '$fechahoy',
-                                                    Grupo = $grupoid,
-                                                    Usuario = $idusaruio
-                                                    WHERE Grupo = $grupoid AND Usuario = $idusaruio;
-                                                ";
+													// Si deuvelve filas significa que se actualizo los datos.
+													if($objeto->comprobar()>0){
+														echo '<script> correctosubido(); </script>';
+													}else
+														echo '<script> error(); </script>';
+												}else // Fallo al actualizar los datos.
+													echo '<script> error(); </script>';
+											}else // Si fallo la subida del archivo.
+											echo '<script> error(); </script>';
+										}else{
+											// Funcion, se le envia los datos y si retorna un Si entra. Significa que se subio el archivo.
+											if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si"){
+												// Funcion que elimina el archivo antiguo. Si retorna Si entra. Signficia que se elimino.
+												if($objetoprocesosapp->eliminararchivo($grupoid, $correousuario, $nombreregaloantiguo) == "Si"){
+													// Consulta. Actualizar los datos de la BD con el nuevo regalo.
+													$consulta = "
+														UPDATE regalo
+														SET
+														Nombre = '$nombreregalo',
+														Volumen = $volumen,
+														Formato = '$formato',
+														Ruta = 'amigoinvisible/regalos/$grupoid/$correousuario',
+														Fecha_Subida = '$fechahoy',
+														Grupo = $grupoid,
+														Usuario = $idusaruio
+														WHERE Grupo = $grupoid AND Usuario = $idusaruio;
+													";
+													$objeto->realizarConsultas($consulta);
 
-                                                //cho $consulta;
-                                                $objeto->realizarConsultas($consulta);
-
-                                                // Si deuvelve filas significa que se actualizo los datos.
-                                                if($objeto->comprobar()>0)
-                                                {
-                                                    echo '<script> correctosubido(); </script>';
-                                                }
-                                                else
-                                                {
-                                                    echo '<script> error(); </script>';
-                                                }
-                                            }
-                                            else // Fallo al actualizar los datos.
-                                            {
-                                                echo '<script> error(); </script>';
-                                            }
-                                        }
-                                        else // Si fallo la subida del archivo.
-                                        {
-                                            echo '<script> error(); </script>';
-                                        }
-                                    }
-                                    else // Si entra aqui significa que es la primera subida de regalo.
-                                    {
+													// Si deuvelve filas significa que se actualizo los datos.
+													if($objeto->comprobar()>0){
+														echo '<script> correctosubido(); </script>';
+													}else
+														echo '<script> error(); </script>';
+												}else // Fallo al actualizar los datos.
+													echo '<script> error(); </script>';
+											}else // Si fallo la subida del archivo.
+												echo '<script> error(); </script>';
+										}
+                                    }else /* Si entra aqui significa que es la primera subida de regalo.*/{
                                         // Consulta para sacar la ID del usuario.
                                         $consulta = "
                                             SELECT IDUsuario, Correo
@@ -804,18 +715,17 @@
                                         $objeto->realizarConsultas($consulta);
 
                                         // Si devuelve filas significa que existe ese usuario.
-                                        if($objeto->comprobarFila()>0)
-                                        {
+                                        if($objeto->comprobarFila()>0){
                                             // Extraigo las filas de la consulta
                                             $fila = $objeto->extraerFilas();
 
                                             // Guardo en una variable la id del usuario.
                                             $idusuario = $fila["IDUsuario"];
 
-
+											//echo $grupoid.'<br>'.$correousuario.'<br>'.$nombretemp.'<br>'.$nombreregalo.'<br>';
+											
                                             // Subimos el regalo en el servidor, en la carpeta del grupo y su correo.
-                                            if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si")
-                                            {
+                                            if($objetoprocesosapp->subirarchivo($grupoid, $correousuario, $nombretemp, $nombreregalo) == "Si"){
                                                 //echo '<script> correctosubido(); </script>';
 
                                                 // Consulta. Inserta los datos en la tabla regalo con los datos recibido del formulario de subida de regalo.
@@ -828,24 +738,16 @@
                                                 //echo $consulta;
 
                                                 // Si devuelve filas, significa que se agrego en la bd los datos.
-                                                if($objeto->comprobar()>0)
-                                                {
+                                                if($objeto->comprobar()>0){
                                                     echo '<script> correctosubido(); </script>';
-                                                }
-                                                else
-                                                {
-                                                    echo '<script> error(); </script>';
-                                                }
+                                                }else
+                                                	echo '<script> error(); </script>';
                                             }
                                             else
-                                            {
-                                                echo '<script> error(); </script>';
-                                            }
+                                            	echo '<script> error(); </script>';
                                         }
                                         else
-                                        {
-                                            echo '<script> error(); </script>';
-                                        }
+                                        	echo '<script> error(); </script>';
                                     }
                                 }
                             }
@@ -871,8 +773,7 @@
                     <div class="modal-body">
                         <?php
 							// Si la opcion es emp
-							if($_GET["opcion"]=='emp')
-							{
+							if($_GET["opcion"]=='emp'){
 
 								// Consulta. Sirve para mostrar los usuarios del grupo.
 								$consulta = "
@@ -887,46 +788,39 @@
 								$objeto->realizarConsultas($consulta);
 
 								// Si devuelve filas significa que ese grupo tiene usuarios.
-								if($objeto->comprobarFila()>0)
-								{
+								if($objeto->comprobarFila()>0){
+									
 									// Guarda todos los correo en una array.
-									while($fila = $objeto->extraerFilas())
-									{
+									while($fila = $objeto->extraerFilas()){
 										// Va guardando lo obtenido de la fila Correo en la array.
-										$array[] = $fila["Correo"];
+										$arraycorreo[] = $fila["Correo"];
 									}
 
 									// Visualizar la array, con la lista de usuarios del grupo.
 									/*
-									foreach($array as $valores)
-									{
+									foreach($array as $valores){
 										echo $valores.'<br>';
 									}
 									*/
 
 									// Contar el tamaño de la array y guardarlo.
-									$contador = count($array);
+									$contador = count($arraycorreo);
 									//echo $contador;
 
 									// Si contador es impar salta mensaje.
-									if($contador% 2 != 0 )
-									{
+									if($contador% 2 != 0 ){
 										echo '<script> errorimparpareja(); </script>';
-									}
-									else // Son numeros par la gente.
-									{
+									}else /* Son numeros par la gente.*/{
 										//$contador2 = $contador-1;
 										// Crear una array, la cual ire agregando numeros hasta llegar a $contador.
-										for ($i = 1; $i <= $contador; $i++)
-										{
+										for ($i = 1; $i <= $contador; $i++){
 											// Va guardando el contador en la array.
 											$arraycontador[] = $i;
 										}
 
 										// Visualizar la array contador.
 										/*
-										foreach($arraycontador as $valor)
-										{
+										foreach($arraycontador as $valor){
 											echo $valor.' ';
 										}
 										*/
@@ -944,36 +838,31 @@
 												echo '</tr>';
 											echo '</thead>';
 										// Recorro la array, $valor son los correos.
-										foreach($array as $valor)
-										{
+										foreach($arraycorreo as $valor){
 											$random=array_rand($arraycontador,1);
 
-											//echo $valor.'|'.$array[$random].'<br>';
+											//echo $valor.'|'.$arraycorreo[$random].'<br>';
 
-											// Si el $valor(Quien Regala) es igual a $array[$random](Destinatario random) entra en el if
-											if($valor == $array[$random])
-											{
+											// Si el $valor(Quien Regala) es igual a $arraycorreo[$random](Destinatario random) entra en el if
+											if($valor == $arraycorreo[$random]){
 												// Se vuelve a barajar
 												$random=array_rand($arraycontador,1);
 
 												// Si vuelve a ser igual entra en el if, y reinicia la pagina.
-												if($valor == $array[$random])
-												{
+												if($valor == $arraycorreo[$random]){
 													// Script para redirigir a la pagina de emparejar ese grupo.
 													echo '<script> 
-														window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php?id='?>
-															<?php echo $_GET["id"] ?><?php echo '&opcion=emp";
+														window.location.href = "http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php?id='
+														?><?php echo $_GET["id"] ?><?php echo '&opcion=emp";
 													</script>';
 												}
-
 											}
 
 											echo '<tbody>';
 											echo '<tr>';
 											  echo '<th>'.$i.'</th>';
 											  echo '<td>'.$valor.'</td>';
-											  echo '<td >'.$array[$random].'</td>';
-
+											  echo '<td >'.$arraycorreo[$random].'</td>';
 												// Guardo la id del grupo en una variable.
 												$idgrupo = $_GET["id"];
 
@@ -984,59 +873,36 @@
 													INNER JOIN regalo ON regalo.Usuario = usuarios.IDUsuario
 													WHERE usuarios.Correo = '".$valor."' AND regalo.Grupo = $idgrupo;
 												";
-
 												//echo $consulta;
 												$objeto->realizarConsultas($consulta);
 
 												// Si devuelve filas significa que esa persona tiene regalo.
-												if($objeto->comprobarFila()>0)
-												{
+												if($objeto->comprobarFila()>0){
 													$fila = $objeto->extraerFilas();
 													echo '<td><a href="/amigoinvisible/regalos/'.$_GET["id"].'/'.$valor.'/'.$fila["Nombre"].'" target="_blank">Regalo</a></td>';
-												}
-												else // SI entra aqui, significa que esa persona no subio regalo.
-												{
+												}else // SI entra aqui, significa que esa persona no subio regalo.
 													echo '<td>Vacio</td>';
-												}
-
-
 											echo '</tr>';
-
 											// Guardo las ID de los destinatarios en una array.
-											$arraydestinatarios[] = $array[$random];
+											$arraydestinatarios[] = $arraycorreo[$random];
 
 											// Borra los numeros del contador, y asi no se repiten los correos.
 											unset($arraycontador[$random]);
 
 											// Va aumentando la $i
 											$i++;
-
-											// Crear array destinatario.
-
-
 										}
 									}
-
 									echo '</table>';
 
 									// Se crea las variables para obtener las raids de las personas 
 									echo '<script> 
-													var regala ='?>
-														<?php echo json_encode($array); ?><?php echo ';
-													var destinatario ='?>
-														<?php echo json_encode($arraydestinatarios); ?><?php echo ';	
-													var grupo ='?>
-														<?php echo $_GET["id"]; ?><?php echo ';	
-												</script>';
-
-
-
-
-
+												var regala ='?><?php echo json_encode($arraycorreo); ?><?php echo ';
+												var destinatario ='?><?php echo json_encode($arraydestinatarios); ?><?php echo ';	
+												var grupo ='?><?php echo $_GET["id"]; ?><?php echo ';	
+										  </script>';
 									echo '<button id="repartir" class="btn btn-warning" type="button" data-dismiss="modal">Repartir</button>';
-
 								}
-								
 							}
                         ?>
                     </div>
@@ -1049,9 +915,6 @@
                 </div>
             </div>
         </div>
-
-
-
 
         <!-- Pie -->
         <footer class="p-3 mb-3 cancelarmarginbottom">

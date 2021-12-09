@@ -1,5 +1,4 @@
-
-//Esta funcion sirve para retornar a la pagina principal si no has iniciado sesion
+// Funcion de alerta personalizada. Cuando no este iniciada la session.
 function nologeado()
 {
     // Mensaje de alerta
@@ -24,8 +23,7 @@ function nologeado()
 
 }
 
-// Esta funcion sirve para mostrar un mensaje de error personalizado.
-
+// Funcion de alerta personalizada. Con cualquier mensaje de error comun.
 function error()
 {
     Swal.fire({
@@ -48,6 +46,7 @@ function error()
 
 }
 
+// Funcion de alerta personalizada. Cuando se elimina un grupo correctamente.
 function correctoeliminado()
 {
     // Mensaje de alerta
@@ -70,6 +69,7 @@ function correctoeliminado()
     })
 }
 
+// Funcion de alerta personalizada. CUando se expulsa correctamente alguien del grupo.
 function correctoexpulsado()
 {
     // Mensaje de alerta
@@ -92,6 +92,7 @@ function correctoexpulsado()
     })
 }
 
+// Funcion de alerta personalizada. Cuando se sube correctamente el archivo.
 function correctosubido()
 {
     // Mensaje de alerta
@@ -113,7 +114,7 @@ function correctosubido()
     })
 }
 
-
+// Funcion de alerta personalizada. Cuando la lista de personas de un grupo es impar.
 function errorimparpareja()
 {
     Swal.fire({
@@ -134,6 +135,7 @@ function errorimparpareja()
     })
 }
 
+// Funcion de alerta personalizada. Cuando se sube un archivo de un formato no correcto.
 function errortipoarchivo()
 {
     Swal.fire({

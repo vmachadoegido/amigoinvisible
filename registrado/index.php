@@ -1,4 +1,15 @@
 <?php
+	/**
+	* Alumno: Victor Manuel Machado Egido.
+	*
+	* Centro Educativo: Escuela Virgen de Guadalupe.
+	*
+	* Ciclo Formativo: Desarrollo de Aplicaciones Web.
+	*
+	* Curso: 2020-2021.
+	*
+	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	*/
     // Iniciar session
     session_start();
 ?>
@@ -19,7 +30,7 @@
         <!-- Fontawesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.css" integrity="sha512-CB+XYxRC7cXZqO/8cP3V+ve2+6g6ynOnvJD6p4E4y3+wwkScH9qEOla+BTHzcwB4xKgvWn816Iv0io5l3rAOBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <!-- Google -->
+        <!--  Google -->
             <!-- Host -->
         <!-- <meta name="google-signin-client_id" content="919013948566-59sj3rmromelp2ojpvqd2ci8rv907idn.apps.googleusercontent.com"> -->
             <!-- Local -->
@@ -37,25 +48,14 @@
     </head>
     <body>
 
-<!--
-         Recoger el correo de la cookie
-        <script>
-
-            // Creo la cookie correo ( No tendria que estar aqui, es de pruebas)
-            document.cookie = "correo=vmachadoegido.guadalupe@alumnado.fundacionloyola.net";
-
-        </script>
--->
-
-        <!-- Comprobar que exite la session correo -->
-        <?php
-            // Si no hay sesion correo, mensaje de alerta.
-            if(!isset($_SESSION["correo"]))
-            {
-                // Mensaje de alerta que no ha iniciado sesion
-                echo '<script> nologeado(); </script>';
-            }
-        ?>
+	<!-- Comprobar que exite la session correo -->
+	<?php
+		// Si no hay sesion correo, mensaje de alerta.
+		if(!isset($_SESSION["correo"])){
+			// Mensaje de alerta que no ha iniciado sesion
+			echo '<script> nologeado(); </script>';
+		}
+	?>
 
 
 
