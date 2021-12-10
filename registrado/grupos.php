@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero contiene la pagina principal de los grupos, la vista, emparejamiento, y muchas acciones mas...
 	*/
 
     // Iniciar session
@@ -32,7 +32,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="author" content="Victor Manuel Machado Egido">
-        <title>Amigo Inivible - Inicio</title>
+        <title>Amigo Invisible - Inicio</title>
 
         <!-- Logo de la empresa en la pestaña -->
         <link rel="shortcut icon" href="../assets/imagenes/logo.png" />
@@ -96,18 +96,18 @@
                 // Se extrae el resultado de la consulta y se guarda en bucle en $fila, y a continuacion se va guardando la IDGrupo en una array
                 while($fila = $objeto->extraerFilas()){
                     // Guardo el dato recibido de la fila IDGrupo en una variable.
-                    $array[] = $fila["IDGrupo"];
+                    $arrayinvitado[] = $fila["IDGrupo"];
                 }
                 // Se recorre la array con los valores de la IDGrupos, que es invitado el usuario.
-                foreach($array as $valor){
+                foreach($arrayinvitado as $valor){
                     // echo $valor.'-';
-                    // Consulta. Comprueba si el correo y el grupo de la invitacion ya esta fue registrado o no.
+                    // Consulta. Comprueba si el correo y el grupo de la invitacion, fue registrado o no.
                     $consulta ="
                         SELECT usuarios.IDUsuario, usuarios.Correo, grupos.IDGrupo, grupos.Propietario
                         FROM usuarios
                         INNER JOIN usuariogrupo ON usuariogrupo.IDUsuario = usuarios.IDUsuario
                         INNER JOIN grupos ON grupos.IDGrupo = usuariogrupo.IDGrupo
-                        WHERE usuarios.Correo = 'vmachadoegido.guadalupe@alumnado.fundacionloyola.net' AND grupos.IDGrupo = '".$valor."';
+                        WHERE usuarios.Correo = '".$correo."' AND grupos.IDGrupo = '".$valor."';
                     ";
                     //print($consulta);
                     //echo '<br><br>';
@@ -344,7 +344,7 @@
 
         <!-- Cabecera, titulo del sitio con foto -->
         <div id="cabezera">
-            <div class="cabezera-titulo">Amigo Inivisle</div>
+            <div class="cabezera-titulo">Amigo Invisible</div>
         </div>
 
         <!-- Contenedor -->
@@ -481,9 +481,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+                        <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -509,9 +507,7 @@
 						<button id="editar" class="btn btn-success" type="button" data-dismiss="modal">
                             Editar
                         </button>
-                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+                        <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -536,9 +532,7 @@
                         <button id="invitar" class="btn btn-success" type="button" data-dismiss="modal">
                             Invitar
                         </button>
-                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+                        <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -582,9 +576,7 @@
                         <button id="expulsar" class="btn btn-success" type="button" data-dismiss="modal">
                             Expulsar
                         </button>
-						<button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+						<a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -754,9 +746,7 @@
                         ?>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+                        <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -908,9 +898,7 @@
                     </div>
                     <div class="modal-footer">
                         <?php echo '<a href="grupos.php?id='.$_GET["id"].'&opcion=emp" class="btn btn-success" type="button">Volver a emparejar</a>'; ?>
-                        <button class="btn btn-warning cancelar" type="button" data-dismiss="modal">
-                            <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php">Cancelar</a>
-                        </button>
+                        <a href="http://22.2daw.esvirgua.com/amigoinvisible/registrado/grupos.php" class="btn btn-warning cancelar" type="button" data-dismiss="modal">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -927,8 +915,8 @@
 
                     <!-- Menu -->
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                        <li><a href="#" class="px-2">Avisos Legales</a></li>
-                        <li><a href="#" class="px-2">Política de Privacidad</a></li>
+                        <li><a href="avisoslegales.php" class="px-2">Avisos Legales</a></li>
+                        <li><a href="https://docs.google.com/document/d/1iepLUcJUnY6fm8Prx63hDC89X487iQmjMEDSQm5f3Pc/edit#" target="_blank" class="px-2">Política de Privacidad</a></li>
                     </ul>
 
                     <!-- Seccion de Botones de Redes Soliales -->

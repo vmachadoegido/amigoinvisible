@@ -1,8 +1,40 @@
+/**
+* Alumno: Victor Manuel Machado Egido.
+*
+* Centro Educativo: Escuela Virgen de Guadalupe.
+*
+* Ciclo Formativo: Desarrollo de Aplicaciones Web.
+*
+* Curso: 2020-2021.
+*
+* Descripcion del fichero: En este fichero esta estilos de la paginas, elemenos, etc.
+*/
+
 /* Fuente de texto */
 *
 {
     font-family: "Open Sans", sans-serif;
 }
+
+/* Poner un borde a todos los botones*/
+button
+{
+    border-width: 1px;
+}
+
+/* Estilo de los enlaces en general */
+a
+{
+    text-decoration: none;
+    color: black;
+}
+
+/* Propiedad de los enlaces al pasar al lado suyo*/
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
 
 /* Estilos de la cabezera*/
 #cabezera
@@ -15,9 +47,10 @@
     width: 100%;
 }
 
+/* Estilo de la cabezera, el titulo*/
 .cabezera-titulo
 {
-    position: absolute;
+    position: relative;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -30,6 +63,7 @@
     text-align: center;
 }
 
+/* Estilo para la raya separadora */
 .rayas
 {
     width: 16%;
@@ -39,11 +73,13 @@
     font-family: "Roboto", sans-serif;
 }
 
+/* Estilo para bloquear el paddint-top de boostrap a la contenedor*/
 .cancelarpaddingtop
 {
     padding-top: 0!important;
 }
 
+/* Propiedades del footer*/
 footer
 {
     background-color: #025179;
@@ -53,13 +89,12 @@ footer
     font-size: 15px;
 }
 
- /*Quitar la decoracion y ponerlo blanco */
+ /* Quitar la decoracion y ponerlo blanco a los enlaces del footer*/
 footer a
 {
     color: white;
     text-decoration: none;
 }
-
 
 /*Cancela el margon bottom, que le da el footer, el boostrap*/
 .cancelarmarginbottom
@@ -67,25 +102,26 @@ footer a
     margin-bottom: 0!important;
 
 }
+/* Propiedades de los enlaces de las redes sociales en general*/
 .redessociales a
 {
     font-size: 19px;
     display: inline;
     margin-right: 20px;
 }
-
+/* Propiedad de de las cajas redessociales */
 .redessociales
 {
     padding-right: 1px;
 }
 
-
+/* Definir una anchura a las cartas/card*/
 .cardtamano
 {
     width: 390px;
 }
 
-
+/* Definir un margen entre los botones de las card/cartas */
 .cardbotones
 {
     margin-left: 10px;
@@ -101,16 +137,6 @@ footer a
     border: 0 transparent;
 }
 
-a
-{
-    text-decoration: none;
-    color: black;
-}
-
-a:hover {
-    text-decoration: none;
-    color: black;
-}
 
 /*Seperacion del label, de la ventana modal invitar*/
 .labelinvitar
@@ -119,12 +145,15 @@ a:hover {
     margin-right: 4px;
 }
 
+/* Margen del input invitar */
 .inputinvitar
 {
     margin-right: 6px;
 }
 
-button
+
+/* Propiedad de alineamiento del texto hacia la izquierda */
+.parrafoizquierda
 {
-    border-width: 1px;
+	text-align: left!important;
 }

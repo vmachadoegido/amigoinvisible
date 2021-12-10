@@ -1,5 +1,4 @@
 <?php
-
 	/**
 	* Alumno: Victor Manuel Machado Egido.
 	*

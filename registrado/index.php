@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero esta el index de los usuarios registrados/logeados.
 	*/
     // Iniciar session
     session_start();
@@ -19,7 +19,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="author" content="Victor Manuel Machado Egido">
-        <title>Amigo Inivible - Inicio</title>
+        <title>Amigo Invisible - Inicio</title>
 
         <!-- Logo de la empresa en la pestaña -->
         <link rel="shortcut icon" href="../assets/imagenes/logo.png" />
@@ -63,7 +63,7 @@
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
             <!-- Imagen de la corpoativa -->
             <a href="" class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <img src="https://fundacionloyola.com/vguadalupe/wp-content/uploads/2019/12/logotipo.png" alt="Imagen Corporativa del Colegio" width="170" height="86" title="logotipo">
+                <img src="../assets/imagenes/logo.png" alt="Imagen Corporativa del Colegio" alt="Imagen Corporativa de la Escuela" width="170" height="86" title="logotipo">
             </a>
             <!-- Opciones del navegador -->
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
@@ -74,7 +74,7 @@
 
         <!-- Cabecera, titulo del sitio con foto -->
         <div id="cabezera">
-            <div class="cabezera-titulo">Amigo Inivisle</div>
+            <div class="cabezera-titulo">Amigo Invisible</div>
         </div>
 
         <!-- Contenedor -->
@@ -82,7 +82,7 @@
             <div class="row py-lg-5 cancelarpaddingtop">
                 <div class="col-lg-6 col-md-8 mx-auto">
                     <!-- Titulo -->
-                    <h1 class="fw-light">Amigo Inivisble</h1>
+                    <h1 class="fw-light">Amigo Invisible</h1>
                     <!-- Separador -->
                     <hr class="rayas">
                     <!-- Contenido-->
@@ -97,7 +97,16 @@
                     <!-- Texto indicando el usuario que has iniciado sesion -->
                     <?php
                         // Muestre el correo guardado de la sesion.
-                        echo '<br>Iniciado Sesion con <br><span style="font-size: 12px;">'.$_SESSION["correo"].'</span><br>';
+
+                        echo '<br>Iniciado Sesion con una cuanta de <br>';
+						echo '<span style="font-size: 12px;">';
+							if($_SESSION["rol"] == "p"){ 
+								echo 'Profesor';
+							} 
+							else
+								if($_SESSION["rol"] == "a")
+									echo "Alumno";
+						echo '<br>'.$_SESSION["correo"].'</span><br>';
                     ?>
                 </div>
             </div>
@@ -113,8 +122,8 @@
 
                     <!-- Menu -->
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                        <li><a href="#" class="px-2">Avisos Legales</a></li>
-                        <li><a href="#" class="px-2">Política de Privacidad</a></li>
+                        <li><a href="avisoslegales.php" class="px-2">Avisos Legales</a></li>
+                        <li><a href="https://docs.google.com/document/d/1iepLUcJUnY6fm8Prx63hDC89X487iQmjMEDSQm5f3Pc/edit#" target="_blank" class="px-2">Política de Privacidad</a></li>
                     </ul>
 
                     <!-- Seccion de Botones de Redes Soliales -->

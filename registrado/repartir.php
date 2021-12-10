@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero estan las acciones para hacer el reparto de los regalos.
 	*/
 
     // Iniciar sesion
@@ -141,7 +141,7 @@
 										Hola, ya tienes tu regalo de tu amigo invisible<br/>
 										Aqui tienes tu regalo <br/>
 
-										http://22.2daw.esvirgua.com/amigoinvisible/regalos/'.$grupo.'/'.$valor.'/'.$regalonombre.'
+										http://22.2daw.esvirgua.com/amigoinvisible/regalos/'.$grupo.'/'.$regala[$i].'/'.$regalonombre.'
 
 									</p>
 								</body>
@@ -152,15 +152,13 @@
 					}
 					// Incrementa el contador.
 					$contadorsi++;
-				}else // No tiene subido ningun regalo.
+				}else /* No tiene subido ningun regalo.*/
 					echo "No";
-			}else // Ese usuario no existe.
+			}else /* Ese usuario no existe.*/
 				echo "No";
 			// Aumenta el contador.
 			$i++;
-		}
-		echo $contadorsi;
-	}
-	else // Si hace falta regalos entra en el else
+		}echo $contadorsi;
+	}else /* Si hace falta regalos entra en el else*/
 		echo "FaltaRegalos";
 		

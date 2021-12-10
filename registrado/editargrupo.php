@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero estan las acciones para editar los grupos.
 	*/
 
     // Iniciar sesion

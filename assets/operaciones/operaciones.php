@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero estan las funciones basicas para acceder a la Base de Datos y hacer operaciones con esta.
 	*/
 
     // Traer los valores de la conexion.

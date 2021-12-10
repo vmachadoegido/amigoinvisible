@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero estan las acciones para eliminar los grupos.
 	*/
 
     //Importo las operaciones
@@ -64,10 +64,10 @@
 				$objetoftp->eliminarsubcarpetas($dir);
 				
 				echo 'Si';
-			}else // Hubo algun problema al eliminar el grupo.
+			}else /* Hubo algun problema al eliminar el grupo.*/
 				echo 'No'; 
-		}else // Si usuario que intenta borrar el grupo no es el propietario.
+		}else /* Si usuario que intenta borrar el grupo no es el propietario.*/
 			echo 'No';
-	}else // Si entra aqui significa que esa persona no esta en ese grupo.
+	}else /* Si entra aqui significa que esa persona no esta en ese grupo.*/
 		echo 'No';
 ?>

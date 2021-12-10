@@ -8,7 +8,7 @@
 	*
 	* Curso: 2020-2021.
 	*
-	* Descripcion del fichero: En este fichero esta definada las variables para acceder al host & Base de Datos.
+	* Descripcion del fichero: En este fichero estan las acciones para expulsar a la gente de los grupos.
 	*/
 
     //Importo las operaciones
@@ -115,7 +115,7 @@
 						$objeto->realizarConsultas($consulta);
 						
 						echo 'Si';
-					}else // Si entra aqui significa que esa persona, no esta registrada en la web/no subio ningun regalo.
+					}else /* Si entra aqui significa que esa persona, no esta registrada en la web/no subio ningun regalo.*/
 						echo 'Si';
 				}
 			}else /* Si no devuelve filas, significa que ese usuario no se registro en la web. */{
